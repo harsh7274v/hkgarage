@@ -1,0 +1,27 @@
+# Force Apache to prioritize index.php
+DirectoryIndex index.php index.html index.htm
+
+# Redirect any old html index requests directly to index.php
+Redirect 301 /index.html https://www.hkgarage.it/index.php
+Redirect 301 /index.htm https://www.hkgarage.it/index.php
+Redirect 301 /default.html https://www.hkgarage.it/index.php
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Force HTTPS
+    RewriteCond %{HTTPS} off
+    RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+</IfModule>
+
+# Protect sensitive configuration files and hidden files
+<FilesMatch "^\.env|\.agents|composer\.(json|lock)|garage\.sql|\.git">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# Prevent Directory Browsing
+Options -Indexes
+
+# Custom Error Pages & UTF-8 Encoding
+AddDefaultCharset UTF-8

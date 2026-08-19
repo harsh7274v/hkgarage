@@ -1,0 +1,14 @@
+{
+    "name": "hkgarage/system",
+    "description": "HK Garage Management System",
+    "type": "project",
+    "require": {
+        "php": ">=8.0",
+        "phpmailer/phpmailer": "^6.8"
+    },
+    "autoload": {
+        "psr-4": {
+            "HKGarage\\": "src/"
+        }
+    }
+}
