@@ -110,7 +110,14 @@ require_once __DIR__ . '/includes/header.php';
                     <?php echo htmlspecialchars($srv['name']); ?> (Stima: <?php echo $srv['duration']; ?> min - €<?php echo number_format($srv['price'], 2); ?>)
                   </option>
                 <?php endforeach; ?>
+                <option value="other">Altro (Specificare)</option>
               </select>
+            </div>
+
+            <!-- Conditional Custom Service Field for 'Altro' -->
+            <div id="otherServiceGroupBooking" class="mt-4 hidden">
+              <label class="block text-xs font-bold text-brand uppercase mb-1.5"><i class="fa-solid fa-pen-to-square mr-1"></i> Specificare il servizio richiesto *</label>
+              <input type="text" id="custom_service" name="custom_service" placeholder="Es. Sostituzione tergicristalli, diagnosi rumore, lucidatura fari..." class="w-full h-12 px-4 bg-brand/5 border border-brand/30 rounded-xl focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand text-sm font-medium transition-all">
             </div>
           </div>
 
@@ -195,67 +202,104 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   });
 
-  // Fetch available slots from API
+  function renderSlotsGrid(data) {
+    if (!data.success) {
+      slotsContainer.innerHTML = `<p class="text-xs text-brand font-bold">${data.message}</p>`;
+      return;
+    }
+
+    if (data.is_closed) {
+      slotsContainer.innerHTML = '<p class="text-xs text-brand font-bold uppercase"><i class="fa-solid fa-store-slash mr-1"></i> Officina chiusa di domenica.</p>';
+      return;
+    }
+
+    if (!data.slots || data.slots.length === 0) {
+      slotsContainer.innerHTML = '<p class="text-xs text-ink/60 font-bold">Nessun orario disponibile per la data selezionata.</p>';
+      return;
+    }
+
+    let html = '<div class="grid grid-cols-3 sm:grid-cols-4 gap-2 w-full max-h-56 overflow-y-auto p-1">';
+    data.slots.forEach(slot => {
+      if (slot.available) {
+        html += `
+          <button type="button" data-time="${slot.time}" class="slot-btn border-2 border-ink/10 hover:border-brand hover:bg-brand/5 text-ink font-bold py-2.5 px-2 rounded-xl text-xs transition-all flex flex-col items-center justify-center">
+            <span>${slot.time}</span>
+            <span class="text-[10px] text-emerald-600 font-bold">Libero</span>
+          </button>
+        `;
+      } else {
+        html += `
+          <button type="button" disabled class="border border-ink/5 bg-cream/60 text-ink/30 font-bold py-2.5 px-2 rounded-xl text-xs cursor-not-allowed flex flex-col items-center justify-center">
+            <span class="line-through">${slot.time}</span>
+            <span class="text-[10px] text-brand/60 font-normal">Occupato</span>
+          </button>
+        `;
+      }
+    });
+    html += '</div>';
+    slotsContainer.innerHTML = html;
+
+    // Slot click events
+    document.querySelectorAll('.slot-btn').forEach(btn => {
+      btn.addEventListener('click', function() {
+        document.querySelectorAll('.slot-btn').forEach(b => {
+          b.classList.remove('bg-brand', 'text-white', 'border-brand', 'shadow-md');
+          b.classList.add('border-ink/10', 'text-ink');
+        });
+        this.classList.remove('border-ink/10', 'text-ink');
+        this.classList.add('bg-brand', 'text-white', 'border-brand', 'shadow-md');
+        bookingTimeInput.value = this.dataset.time;
+      });
+    });
+  }
+
+  // Fetch available slots with 5-minute cookie cache
   function loadTimeSlots(dateStr) {
     slotsContainer.innerHTML = '<div class="text-center text-ink/60 py-4 text-xs font-bold"><i class="fa-solid fa-spinner fa-spin mr-2 text-brand"></i>Caricamento orari disponibili...</div>';
     bookingTimeInput.value = '';
 
+    // 1. Check 5-minute cookie cache
+    if (typeof getSlotsCacheCookie === 'function') {
+      const cachedData = getSlotsCacheCookie(dateStr);
+      if (cachedData) {
+        console.log(`[Cache Hit - 5 Min Cookie] Loaded slot availability for ${dateStr} from cookie cache.`);
+        renderSlotsGrid(cachedData);
+        return;
+      }
+    }
+
+    // 2. Cache miss or expired (> 5 min) -> Fetch fresh from API
+    console.log(`[Cache Miss / Expired] Fetching fresh availability for ${dateStr} from API...`);
     fetch(`api/get-slots.php?date=${dateStr}`)
       .then(res => res.json())
       .then(data => {
-        if (!data.success) {
-          slotsContainer.innerHTML = `<p class="text-xs text-brand font-bold">${data.message}</p>`;
-          return;
+        if (data && data.success && !data.is_closed && typeof setSlotsCacheCookie === 'function') {
+          setSlotsCacheCookie(dateStr, data);
         }
-
-        if (data.is_closed) {
-          slotsContainer.innerHTML = '<p class="text-xs text-brand font-bold uppercase"><i class="fa-solid fa-store-slash mr-1"></i> Officina chiusa di domenica.</p>';
-          return;
-        }
-
-        if (!data.slots || data.slots.length === 0) {
-          slotsContainer.innerHTML = '<p class="text-xs text-ink/60 font-bold">Nessun orario disponibile per la data selezionata.</p>';
-          return;
-        }
-
-        let html = '<div class="grid grid-cols-3 sm:grid-cols-4 gap-2 w-full max-h-56 overflow-y-auto p-1">';
-        data.slots.forEach(slot => {
-          if (slot.available) {
-            html += `
-              <button type="button" data-time="${slot.time}" class="slot-btn border-2 border-ink/10 hover:border-brand hover:bg-brand/5 text-ink font-bold py-2.5 px-2 rounded-xl text-xs transition-all flex flex-col items-center justify-center">
-                <span>${slot.time}</span>
-                <span class="text-[10px] text-emerald-600 font-bold">Libero</span>
-              </button>
-            `;
-          } else {
-            html += `
-              <button type="button" disabled class="border border-ink/5 bg-cream/60 text-ink/30 font-bold py-2.5 px-2 rounded-xl text-xs cursor-not-allowed flex flex-col items-center justify-center">
-                <span class="line-through">${slot.time}</span>
-                <span class="text-[10px] text-brand/60 font-normal">Occupato</span>
-              </button>
-            `;
-          }
-        });
-        html += '</div>';
-        slotsContainer.innerHTML = html;
-
-        // Slot click events
-        document.querySelectorAll('.slot-btn').forEach(btn => {
-          btn.addEventListener('click', function() {
-            document.querySelectorAll('.slot-btn').forEach(b => {
-              b.classList.remove('bg-brand', 'text-white', 'border-brand', 'shadow-md');
-              b.classList.add('border-ink/10', 'text-ink');
-            });
-            this.classList.remove('border-ink/10', 'text-ink');
-            this.classList.add('bg-brand', 'text-white', 'border-brand', 'shadow-md');
-            bookingTimeInput.value = this.getAttribute('data-time');
-          });
-        });
+        renderSlotsGrid(data);
       })
       .catch(err => {
-        console.error(err);
-        slotsContainer.innerHTML = '<p class="text-xs text-brand font-bold">Errore di connessione durante il caricamento degli orari.</p>';
+        console.error('Error fetching slots:', err);
+        slotsContainer.innerHTML = '<p class="text-xs text-brand font-bold">Errore caricamento orari.</p>';
       });
+  // Toggle Custom Service Input Field for 'Altro'
+  const serviceSelectInput = document.getElementById('service_id');
+  const otherServiceGroupBooking = document.getElementById('otherServiceGroupBooking');
+  const customServiceInput = document.getElementById('custom_service');
+
+  if (serviceSelectInput) {
+    serviceSelectInput.addEventListener('change', function() {
+      if (this.value === 'other') {
+        if (otherServiceGroupBooking) otherServiceGroupBooking.classList.remove('hidden');
+        if (customServiceInput) customServiceInput.required = true;
+      } else {
+        if (otherServiceGroupBooking) otherServiceGroupBooking.classList.add('hidden');
+        if (customServiceInput) {
+          customServiceInput.required = false;
+          customServiceInput.value = '';
+        }
+      }
+    });
   }
 
   // Handle Form Submission

@@ -15,16 +15,24 @@ $email        = trim(filter_var($data['email'] ?? '', FILTER_SANITIZE_EMAIL));
 $vehicleBrand = trim($data['vehicle_brand'] ?? '');
 $vehicleModel = trim($data['vehicle_model'] ?? '');
 $registration = trim($data['vehicle_registration'] ?? '');
-$serviceId    = intval($data['service_id'] ?? 0);
-$bookingDate  = trim($data['booking_date'] ?? '');
-$bookingTime  = trim($data['booking_time'] ?? '');
-$notes        = trim($data['notes'] ?? '');
+$serviceIdRaw  = $data['service_id'] ?? '';
+$customService = trim($data['custom_service'] ?? '');
+$bookingDate   = trim($data['booking_date'] ?? '');
+$bookingTime   = trim($data['booking_time'] ?? '');
+$notes         = trim($data['notes'] ?? '');
+
+$isOtherService = ($serviceIdRaw === 'other' || $serviceIdRaw === '6' || $serviceIdRaw == 6);
 
 // ── Validation ────────────────────────────────────────────────────────────────
 if (empty($customerName) || empty($phone) || empty($email) || empty($vehicleBrand) ||
-    empty($vehicleModel) || empty($registration) || $serviceId <= 0 ||
+    empty($vehicleModel) || empty($registration) || empty($serviceIdRaw) ||
     empty($bookingDate) || empty($bookingTime)) {
     echo json_encode(['success' => false, 'message' => 'Compila tutti i campi obbligatori del modulo.']);
+    exit;
+}
+
+if ($isOtherService && empty($customService)) {
+    echo json_encode(['success' => false, 'message' => 'Specificare il servizio richiesto nel campo "Altro".']);
     exit;
 }
 
@@ -53,14 +61,24 @@ if (!preg_match('/^([01][0-9]|2[0-3]):[0-5][0-9]$/', $bookingTime)) {
 try {
     $db = getDBConnection();
 
-    // Verify service exists
-    $stmtService = $db->prepare("SELECT name, duration, price FROM services WHERE id = :id AND active = 1");
-    $stmtService->execute([':id' => $serviceId]);
-    $service = $stmtService->fetch();
+    if ($isOtherService) {
+        $serviceId = 1; // Fallback valid FK for DB constraint
+        $service = [
+            'name' => 'Altro: ' . $customService,
+            'duration' => 30,
+            'price' => 0.00
+        ];
+        $notes = "[Servizio Personalizzato: " . $customService . "]" . (!empty($notes) ? "\n" . $notes : "");
+    } else {
+        $serviceId = intval($serviceIdRaw);
+        $stmtService = $db->prepare("SELECT name, duration, price FROM services WHERE id = :id AND active = 1");
+        $stmtService->execute([':id' => $serviceId]);
+        $service = $stmtService->fetch();
 
-    if (!$service) {
-        echo json_encode(['success' => false, 'message' => 'Servizio selezionato non valido o non disponibile.']);
-        exit;
+        if (!$service) {
+            echo json_encode(['success' => false, 'message' => 'Servizio selezionato non valido o non disponibile.']);
+            exit;
+        }
     }
 
     // ── Begin atomic transaction ─────────────────────────────────────────────

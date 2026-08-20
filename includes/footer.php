@@ -150,6 +150,66 @@
       }
     }
 
+    // ── 5-Minute Cookie & LocalStorage Slot Availability Cache ───────────────
+    const SLOTS_CACHE_TTL_MS = 5 * 60 * 1000; // 5 Minutes (300,000 ms)
+
+    function setSlotsCacheCookie(dateStr, data) {
+      const cachePayload = {
+        timestamp: Date.now(),
+        data: data
+      };
+      const jsonStr = JSON.stringify(cachePayload);
+      const cookieName = `hk_slots_${dateStr}`;
+      const maxAgeSeconds = 300; // 5 minutes
+      document.cookie = `${cookieName}=${encodeURIComponent(jsonStr)}; path=/; max-age=${maxAgeSeconds}; SameSite=Lax`;
+      try {
+        localStorage.setItem(cookieName, jsonStr);
+      } catch (e) {}
+    }
+
+    function getSlotsCacheCookie(dateStr) {
+      const cookieName = `hk_slots_${dateStr}`;
+      
+      // 1. Try reading from Document Cookie
+      const nameEQ = cookieName + "=";
+      const ca = document.cookie.split(';');
+      for (let i = 0; i < ca.length; i++) {
+        let c = ca[i].trim();
+        if (c.indexOf(nameEQ) === 0) {
+          try {
+            const payload = JSON.parse(decodeURIComponent(c.substring(nameEQ.length)));
+            if (payload && payload.timestamp && (Date.now() - payload.timestamp < SLOTS_CACHE_TTL_MS)) {
+              return payload.data;
+            }
+          } catch (e) {}
+        }
+      }
+
+      // 2. Fallback: LocalStorage
+      try {
+        const localData = localStorage.getItem(cookieName);
+        if (localData) {
+          const payload = JSON.parse(localData);
+          if (payload && payload.timestamp && (Date.now() - payload.timestamp < SLOTS_CACHE_TTL_MS)) {
+            return payload.data;
+          } else {
+            localStorage.removeItem(cookieName);
+          }
+        }
+      } catch (e) {}
+
+      return null; // Cache miss or expired (> 5 minutes)
+    }
+
+    function clearSlotsCacheCookie(dateStr) {
+      if (!dateStr) return;
+      const cookieName = `hk_slots_${dateStr}`;
+      document.cookie = `${cookieName}=; path=/; max-age=0`;
+      try {
+        localStorage.removeItem(cookieName);
+      } catch (e) {}
+    }
+
     document.addEventListener('DOMContentLoaded', () => {
       // Initialize Flatpickr datepicker
       const dateInput = document.getElementById('modalBookingDate');
@@ -172,33 +232,53 @@
         });
       }
 
-      function fetchSlotsForDate(dateStr) {
+      function renderSlotsToSelect(data) {
         if (!timeSelect) return;
+        timeSelect.innerHTML = '';
+        if (!data.success || data.is_closed) {
+          timeSelect.innerHTML = '<option value="">Officina chiusa in questa data</option>';
+          return;
+        }
+
+        const available = data.slots.filter(s => s.available);
+        if (available.length === 0) {
+          timeSelect.innerHTML = '<option value="">Nessun orario disponibile per la data</option>';
+          return;
+        }
+
+        timeSelect.innerHTML = '<option value="">Seleziona orario</option>';
+        available.forEach(slot => {
+          const opt = document.createElement('option');
+          opt.value = slot.time;
+          opt.textContent = slot.time;
+          timeSelect.appendChild(opt);
+        });
+      }
+
+      function fetchSlotsForDate(dateStr, forceBypassCache = false) {
+        if (!timeSelect || !dateStr) return;
         timeSelect.innerHTML = '<option value="">Caricamento orari...</option>';
         const serviceId = serviceSelect ? serviceSelect.value : 1;
 
+        // 1. Check 5-minute cookie cache unless forced bypass
+        if (!forceBypassCache) {
+          const cachedData = getSlotsCacheCookie(dateStr);
+          if (cachedData) {
+            console.log(`[Cache Hit - 5 Min Cookie] Loaded slot availability for ${dateStr} from cookie cache.`);
+            renderSlotsToSelect(cachedData);
+            return;
+          }
+        }
+
+        // 2. Cache miss or expired (> 5 min) -> Fetch fresh from Database API
+        console.log(`[Cache Miss / Expired] Fetching fresh availability for ${dateStr} from database API...`);
         fetch(`api/get-slots.php?date=${dateStr}&service_id=${serviceId}`)
           .then(res => res.json())
           .then(data => {
-            timeSelect.innerHTML = '';
-            if (!data.success || data.is_closed) {
-              timeSelect.innerHTML = '<option value="">Officina chiusa in questa data</option>';
-              return;
+            if (data && data.success && !data.is_closed) {
+              setSlotsCacheCookie(dateStr, data);
             }
-
-            const available = data.slots.filter(s => s.available);
-            if (available.length === 0) {
-              timeSelect.innerHTML = '<option value="">Nessun orario disponibile per la data</option>';
-              return;
-            }
-
-            timeSelect.innerHTML = '<option value="">Seleziona orario</option>';
-            available.forEach(slot => {
-              const opt = document.createElement('option');
-              opt.value = slot.time;
-              opt.textContent = slot.time;
-              timeSelect.appendChild(opt);
-            });
+            renderSlotsToSelect(data);
           })
           .catch(err => {
             console.error('Error fetching slots:', err);
@@ -206,8 +286,22 @@
           });
       }
 
+      const otherGroup = document.getElementById('modalOtherServiceGroup');
+      const customInput = document.getElementById('modalCustomService');
+
       if (serviceSelect) {
         serviceSelect.addEventListener('change', () => {
+          if (serviceSelect.value === 'other') {
+            if (otherGroup) otherGroup.classList.remove('hidden');
+            if (customInput) customInput.required = true;
+          } else {
+            if (otherGroup) otherGroup.classList.add('hidden');
+            if (customInput) {
+              customInput.required = false;
+              customInput.value = '';
+            }
+          }
+
           if (dateInput && dateInput.value) {
             fetchSlotsForDate(dateInput.value);
           }
@@ -227,6 +321,7 @@
           }
 
           const formData = new FormData(form);
+          const bookedDate = formData.get('booking_date');
 
           fetch('api/book-appointment.php', {
             method: 'POST',
@@ -235,6 +330,9 @@
           .then(res => res.json())
           .then(data => {
             if (data.success) {
+              // Invalidate 5-minute cookie cache for this date so new lookups get updated slots
+              clearSlotsCacheCookie(bookedDate);
+
               closeBookingModal();
               Swal.fire({
                 icon: 'success',

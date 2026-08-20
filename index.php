@@ -1018,7 +1018,14 @@ require_once __DIR__ . '/includes/header.php';
             <?php foreach ($servicesList as $s): ?>
               <option value="<?php echo $s['id']; ?>"><?php echo htmlspecialchars(isset($s['name']) ? $s['name'] : $s['title']); ?></option>
             <?php endforeach; ?>
+            <option value="other">Altro (Specificare)</option>
           </select>
+        </div>
+
+        <!-- Conditional Custom Service Field for 'Altro' -->
+        <div id="modalOtherServiceGroup" class="hidden">
+          <label class="text-xs font-bold text-brand mb-1 block"><i class="fa-solid fa-[#18181B] fa-pen-to-square mr-1"></i> Specificare il servizio richiesto *</label>
+          <input type="text" id="modalCustomService" name="custom_service" placeholder="Es. Sostituzione tergicristalli, diagnosi rumore, lucidatura fari..." class="w-full h-10 px-3 rounded-xl border border-brand/30 bg-brand/5 text-sm focus:border-brand focus:ring-1 focus:ring-brand outline-none font-medium" />
         </div>
 
         <div class="grid grid-cols-3 gap-2">
