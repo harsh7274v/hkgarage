@@ -3,7 +3,7 @@ require_once __DIR__ . '/../includes/config.php';
 require_once __DIR__ . '/../includes/database.php';
 require_once __DIR__ . '/../includes/auth.php';
 
-$pageTitle = "Gestione Appuntamenti";
+$pageTitle = "Appuntamenti";
 
 // Handle Status Change via POST
 $actionMessage = '';
@@ -100,13 +100,81 @@ require_once __DIR__ . '/admin-header.php';
   </script>
 <?php endif; ?>
 
+<!-- Custom DataTables Styling Overrides for Theme Match -->
+<style>
+  .dataTables_wrapper .dataTables_length select {
+    background-color: #F8F8F8;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: 9999px;
+    padding: 6px 14px;
+    font-weight: 700;
+    font-size: 12px;
+    outline: none;
+    color: #18181B;
+  }
+  .dataTables_wrapper .dataTables_filter input {
+    background-color: #F8F8F8;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: 9999px;
+    padding: 6px 16px;
+    font-size: 12px;
+    font-weight: 600;
+    outline: none;
+    margin-left: 8px;
+    color: #18181B;
+  }
+  .dataTables_wrapper .dataTables_info {
+    font-size: 12px;
+    font-weight: 600;
+    color: rgba(24, 24, 27, 0.5);
+    padding-top: 20px;
+  }
+  .dataTables_wrapper .dataTables_paginate {
+    padding-top: 16px;
+  }
+  .dataTables_wrapper .dataTables_paginate .paginate_button {
+    border-radius: 9999px !important;
+    border: 1px solid rgba(0, 0, 0, 0.06) !important;
+    background: #FFFFFF !important;
+    color: #18181B !important;
+    font-size: 12px !important;
+    font-weight: 700 !important;
+    padding: 6px 14px !important;
+    margin: 0 3px !important;
+    transition: all 0.2s ease !important;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05) !important;
+  }
+  .dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+    background: #18181B !important;
+    color: #FFFFFF !important;
+    border-color: #18181B !important;
+  }
+  .dataTables_wrapper .dataTables_paginate .paginate_button.current,
+  .dataTables_wrapper .dataTables_paginate .paginate_button.current:hover {
+    background: #18181B !important;
+    color: #FFFFFF !important;
+    border-color: #18181B !important;
+    box-shadow: 0 4px 12px rgba(24, 24, 27, 0.15) !important;
+  }
+  .dataTables_wrapper .dataTables_paginate .paginate_button.disabled,
+  .dataTables_wrapper .dataTables_paginate .paginate_button.disabled:hover {
+    opacity: 0.4 !important;
+    background: #F8F8F8 !important;
+    color: #18181B !important;
+    cursor: not-allowed !important;
+  }
+  table.dataTable.no-footer {
+    border-bottom: 0 !important;
+  }
+</style>
+
 <!-- Filters Toolbar -->
-<div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200 mb-8">
+<div class="bg-white p-7 rounded-3xl shadow-sm border border-black/5 mb-6">
   <form method="GET" action="appointments.php" class="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 gap-4 items-end">
     
     <div>
-      <label class="block text-xs font-extrabold text-gray-700 uppercase mb-1">Filtra per Stato</label>
-      <select name="status" class="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg text-sm font-semibold focus:ring-2 focus:ring-[#d32f2f]">
+      <label class="block text-xs font-bold text-ink/60 uppercase tracking-wider mb-1.5 font-display">Filtra per Stato</label>
+      <select name="status" class="w-full px-4 py-2.5 bg-[#F8F8F8] border border-black/10 rounded-full text-xs font-bold outline-none focus:border-ink">
         <option value="all" <?php echo ($statusFilter === 'all') ? 'selected' : ''; ?>>Tutti gli Stati</option>
         <option value="Pending" <?php echo ($statusFilter === 'Pending') ? 'selected' : ''; ?>>Pending (In Attesa)</option>
         <option value="Confirmed" <?php echo ($statusFilter === 'Confirmed') ? 'selected' : ''; ?>>Confirmed (Confermati)</option>
@@ -116,15 +184,15 @@ require_once __DIR__ . '/admin-header.php';
     </div>
 
     <div>
-      <label class="block text-xs font-extrabold text-gray-700 uppercase mb-1">Filtra per Data</label>
-      <input type="date" name="date" value="<?php echo htmlspecialchars($dateFilter); ?>" class="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg text-sm font-semibold focus:ring-2 focus:ring-[#d32f2f]">
+      <label class="block text-xs font-bold text-ink/60 uppercase tracking-wider mb-1.5 font-display">Filtra per Data</label>
+      <input type="date" name="date" value="<?php echo htmlspecialchars($dateFilter); ?>" class="w-full px-4 py-2 bg-[#F8F8F8] border border-black/10 rounded-full text-xs font-bold outline-none focus:border-ink">
     </div>
 
     <div class="flex items-center gap-2">
-      <button type="submit" class="bg-[#1a1c1e] hover:bg-[#d32f2f] text-white font-extrabold text-xs uppercase px-5 py-2.5 rounded-lg transition-colors shadow">
+      <button type="submit" class="bg-[#18181B] hover:bg-black text-white font-bold text-xs px-6 py-2.5 rounded-full transition-all shadow-sm">
         <i class="fa-solid fa-filter mr-1"></i> Filtra
       </button>
-      <a href="appointments.php" class="bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold text-xs uppercase px-4 py-2.5 rounded-lg transition-colors">
+      <a href="appointments.php" class="bg-black/5 hover:bg-black/10 text-ink font-bold text-xs px-5 py-2.5 rounded-full transition-colors">
         Reset
       </a>
     </div>
@@ -133,65 +201,62 @@ require_once __DIR__ . '/admin-header.php';
 </div>
 
 <!-- Appointments Table Card -->
-<div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-  <div class="p-6 border-b border-gray-200 flex justify-between items-center">
-    <h3 class="font-black text-lg uppercase text-[#1a1c1e]">Elenco Prenotazioni (<?php echo count($appointments); ?>)</h3>
-  </div>
+<div class="bg-white rounded-3xl shadow-sm border border-black/5 overflow-hidden p-7">
 
-  <div class="p-6 overflow-x-auto">
+  <div class="overflow-x-auto">
     <table id="appointmentsTable" class="w-full text-left text-sm border-collapse">
       <thead>
-        <tr class="bg-gray-100 text-gray-700 font-extrabold uppercase text-xs">
-          <th class="p-3 rounded-l">ID</th>
-          <th class="p-3">Cliente</th>
-          <th class="p-3">Telefono / Email</th>
-          <th class="p-3">Veicolo</th>
-          <th class="p-3">Servizio</th>
-          <th class="p-3">Data e Ora</th>
-          <th class="p-3">Stato</th>
-          <th class="p-3 text-right rounded-r">Azioni</th>
+        <tr class="text-xs font-bold text-ink/40 uppercase border-b border-black/5 pb-3">
+          <th class="pb-3 font-display">ID</th>
+          <th class="pb-3 font-display">Cliente</th>
+          <th class="pb-3 font-display">Telefono / Email</th>
+          <th class="pb-3 font-display">Veicolo</th>
+          <th class="pb-3 font-display">Servizio</th>
+          <th class="pb-3 font-display">Data e Ora</th>
+          <th class="pb-3 font-display">Stato</th>
+          <th class="pb-3 font-display text-right">Azioni</th>
         </tr>
       </thead>
-      <tbody class="divide-y divide-gray-200 font-medium">
+      <tbody class="divide-y divide-black/5 font-medium text-ink">
         <?php foreach ($appointments as $app): ?>
-          <tr class="hover:bg-gray-50 transition-colors">
-            <td class="p-3 font-extrabold text-[#1a1c1e]">#<?php echo $app['id']; ?></td>
+          <tr class="hover:bg-black/[0.02] transition-colors">
+            <td class="py-4 font-mono font-bold text-xs text-ink/70">#<?php echo $app['id']; ?></td>
             
-            <td class="p-3">
-              <span class="font-bold text-[#1a1c1e] block"><?php echo htmlspecialchars($app['customer_name']); ?></span>
+            <td class="py-4">
+              <span class="font-display font-bold text-sm text-ink block"><?php echo htmlspecialchars($app['customer_name']); ?></span>
             </td>
 
-            <td class="p-3 text-xs">
-              <p><i class="fa-solid fa-phone text-gray-400 mr-1"></i><?php echo htmlspecialchars($app['phone']); ?></p>
-              <p class="text-gray-500"><i class="fa-regular fa-envelope text-gray-400 mr-1"></i><?php echo htmlspecialchars($app['email']); ?></p>
+            <td class="py-4 text-xs">
+              <p><i class="fa-solid fa-phone text-ink/40 mr-1"></i><?php echo htmlspecialchars($app['phone']); ?></p>
+              <p class="text-ink/60"><i class="fa-regular fa-envelope text-ink/40 mr-1"></i><?php echo htmlspecialchars($app['email']); ?></p>
             </td>
 
-            <td class="p-3">
-              <span class="font-bold text-[#1a1c1e] block"><?php echo htmlspecialchars($app['vehicle_brand'] . ' ' . $app['vehicle_model']); ?></span>
-              <span class="text-xs bg-gray-100 px-2 py-0.5 rounded font-mono font-bold text-gray-700"><?php echo htmlspecialchars($app['vehicle_registration']); ?></span>
+            <td class="py-4">
+              <span class="font-bold text-ink text-xs block"><?php echo htmlspecialchars($app['vehicle_brand'] . ' ' . $app['vehicle_model']); ?></span>
+              <span class="text-[11px] bg-black/5 px-2 py-0.5 rounded-full font-mono font-bold text-ink/70"><?php echo htmlspecialchars($app['vehicle_registration']); ?></span>
             </td>
 
-            <td class="p-3 font-semibold text-gray-800">
+            <td class="py-4 font-semibold text-xs text-ink">
               <?php echo htmlspecialchars($app['service_name'] ?? 'N/D'); ?>
             </td>
 
-            <td class="p-3 whitespace-nowrap text-xs">
-              <p class="font-bold text-[#1a1c1e]"><?php echo date('d/m/Y', strtotime($app['booking_date'])); ?></p>
-              <p class="text-[#d32f2f] font-extrabold"><i class="fa-regular fa-clock mr-1"></i><?php echo date('H:i', strtotime($app['booking_time'])); ?></p>
+            <td class="py-4 whitespace-nowrap text-xs">
+              <p class="font-bold text-ink"><?php echo date('d/m/Y', strtotime($app['booking_date'])); ?></p>
+              <p class="text-brand font-bold"><i class="fa-regular fa-clock mr-1"></i><?php echo date('H:i', strtotime($app['booking_time'])); ?></p>
             </td>
 
-            <td class="p-3">
+            <td class="py-4">
               <!-- Quick Status Change Form -->
               <form method="POST" action="appointments.php" class="inline-block">
                 <input type="hidden" name="action" value="update_status">
                 <input type="hidden" name="appointment_id" value="<?php echo $app['id']; ?>">
                 <?php
-                  $selectBg = 'bg-amber-100 text-amber-800 border-amber-300';
-                  if ($app['status'] === 'Confirmed') $selectBg = 'bg-blue-100 text-blue-800 border-blue-300';
-                  if ($app['status'] === 'Completed') $selectBg = 'bg-emerald-100 text-emerald-800 border-emerald-300';
-                  if ($app['status'] === 'Cancelled') $selectBg = 'bg-red-100 text-red-800 border-red-300';
+                  $selectBg = 'bg-amber-100 text-amber-800';
+                  if ($app['status'] === 'Confirmed') $selectBg = 'bg-[#18181B] text-white';
+                  if ($app['status'] === 'Completed') $selectBg = 'bg-emerald-100 text-emerald-800';
+                  if ($app['status'] === 'Cancelled') $selectBg = 'bg-rose-100 text-rose-800';
                 ?>
-                <select name="new_status" onchange="this.form.submit()" class="text-xs font-extrabold px-2.5 py-1 rounded border shadow-sm cursor-pointer <?php echo $selectBg; ?>">
+                <select name="new_status" onchange="this.form.submit()" class="text-xs font-bold px-3 py-1.5 rounded-full shadow-sm cursor-pointer border-0 outline-none <?php echo $selectBg; ?>">
                   <option value="Pending" <?php echo ($app['status'] === 'Pending') ? 'selected' : ''; ?>>Pending</option>
                   <option value="Confirmed" <?php echo ($app['status'] === 'Confirmed') ? 'selected' : ''; ?>>Confirmed</option>
                   <option value="Completed" <?php echo ($app['status'] === 'Completed') ? 'selected' : ''; ?>>Completed</option>
@@ -200,13 +265,13 @@ require_once __DIR__ . '/admin-header.php';
               </form>
             </td>
 
-            <td class="p-3 text-right whitespace-nowrap">
+            <td class="py-4 text-right whitespace-nowrap">
               <div class="flex items-center justify-end gap-2">
-                <a href="appointment-view.php?id=<?php echo $app['id']; ?>" class="bg-gray-100 hover:bg-[#1a1c1e] hover:text-white text-gray-800 text-xs font-extrabold px-3 py-1.5 rounded transition-colors" title="Visualizza Scheda">
-                  <i class="fa-solid fa-eye"></i> Visualizza
+                <a href="appointment-view.php?id=<?php echo $app['id']; ?>" class="bg-black/5 hover:bg-[#18181B] hover:text-white text-ink text-xs font-bold px-3 py-1.5 rounded-full transition-colors" title="Visualizza Scheda">
+                  <i class="fa-solid fa-eye mr-1"></i> Scheda
                 </a>
 
-                <button type="button" onclick="confirmDelete(<?php echo $app['id']; ?>)" class="bg-red-50 hover:bg-red-600 hover:text-white text-[#d32f2f] text-xs font-extrabold px-3 py-1.5 rounded transition-colors" title="Elimina">
+                <button type="button" onclick="confirmDelete(<?php echo $app['id']; ?>)" class="bg-rose-50 hover:bg-rose-600 hover:text-white text-rose-600 text-xs font-bold px-3 py-1.5 rounded-full transition-colors" title="Elimina">
                   <i class="fa-solid fa-trash"></i>
                 </button>
               </div>

@@ -59,9 +59,11 @@ if (!$appointment) {
 require_once __DIR__ . '/admin-header.php';
 ?>
 
+<!-- Back Link Button -->
 <div class="mb-6">
-  <a href="appointments.php" class="text-xs font-bold text-gray-500 hover:text-[#d32f2f] uppercase transition-colors">
-    &larr; Torna alla lista appuntamenti
+  <a href="appointments.php" class="inline-flex items-center gap-2 bg-white px-5 py-2.5 rounded-full border border-black/5 shadow-sm text-xs font-bold text-ink/70 hover:text-ink hover:bg-black/5 transition-all">
+    <i class="fa-solid fa-arrow-left text-xs"></i>
+    <span>Torna alla lista appuntamenti</span>
   </a>
 </div>
 
@@ -70,46 +72,46 @@ require_once __DIR__ . '/admin-header.php';
     document.addEventListener('DOMContentLoaded', function() {
       Swal.fire({
         icon: 'success',
-        title: 'Aggiornato',
+        title: 'Operazione Completata',
         text: <?php echo json_encode($message); ?>,
-        confirmButtonColor: '#d32f2f'
+        confirmButtonColor: '#18181B'
       });
     });
   </script>
 <?php endif; ?>
 
-<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
   
   <!-- Left Side: Appointment Information Cards -->
   <div class="lg:col-span-2 space-y-6">
     
     <!-- Header Summary Card -->
-    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+    <div class="bg-white p-7 rounded-3xl shadow-sm border border-black/5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
       <div>
         <div class="flex items-center gap-3">
-          <h2 class="text-2xl font-black text-[#1a1c1e]">Appuntamento #<?php echo $appointment['id']; ?></h2>
+          <h2 class="font-display font-black text-2xl text-[#18181B]">Appuntamento #<?php echo $appointment['id']; ?></h2>
           <?php
             $badgeBg = 'bg-amber-100 text-amber-800';
-            if ($appointment['status'] === 'Confirmed') $badgeBg = 'bg-blue-100 text-blue-800';
+            if ($appointment['status'] === 'Confirmed') $badgeBg = 'bg-[#18181B] text-white';
             if ($appointment['status'] === 'Completed') $badgeBg = 'bg-emerald-100 text-emerald-800';
-            if ($appointment['status'] === 'Cancelled') $badgeBg = 'bg-red-100 text-red-800';
+            if ($appointment['status'] === 'Cancelled') $badgeBg = 'bg-rose-100 text-rose-800';
           ?>
-          <span class="px-3 py-1 rounded-full text-xs font-extrabold uppercase <?php echo $badgeBg; ?>">
+          <span class="px-4 py-1.5 rounded-full text-xs font-bold shadow-sm <?php echo $badgeBg; ?>">
             <?php echo htmlspecialchars($appointment['status']); ?>
           </span>
         </div>
-        <p class="text-xs text-gray-500 font-semibold mt-1">
+        <p class="text-xs text-ink/50 font-medium mt-1.5">
           Inviato il <?php echo date('d/m/Y H:i', strtotime($appointment['created_at'])); ?>
         </p>
       </div>
 
-      <div class="text-right">
-        <div class="text-lg font-black text-[#d32f2f]">
-          <i class="fa-regular fa-calendar-check mr-1"></i>
+      <div class="bg-[#F8F8F8] px-5 py-3 rounded-2xl border border-black/5 text-right flex-shrink-0">
+        <div class="text-base font-display font-black text-[#18181B]">
+          <i class="fa-regular fa-calendar-check text-brand mr-1.5"></i>
           <?php echo date('d/m/Y', strtotime($appointment['booking_date'])); ?>
         </div>
-        <div class="text-sm font-extrabold text-gray-700">
-          Ore <?php echo date('H:i', strtotime($appointment['booking_time'])); ?>
+        <div class="text-xs font-bold text-brand mt-0.5">
+          <i class="fa-regular fa-clock mr-1"></i>Ore <?php echo date('H:i', strtotime($appointment['booking_time'])); ?>
         </div>
       </div>
     </div>
@@ -118,50 +120,62 @@ require_once __DIR__ . '/admin-header.php';
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
       
       <!-- Customer Card -->
-      <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-        <h3 class="text-xs font-extrabold uppercase text-gray-400 tracking-wider mb-4 border-b pb-2">
-          <i class="fa-solid fa-user text-[#d32f2f] mr-1"></i> Dettagli Cliente
-        </h3>
-        <div class="space-y-3 text-sm">
-          <div>
-            <span class="text-xs text-gray-400 font-bold uppercase block">Nome e Cognome</span>
-            <span class="font-extrabold text-[#1a1c1e] text-base"><?php echo htmlspecialchars($appointment['customer_name']); ?></span>
+      <div class="bg-white p-7 rounded-3xl shadow-sm border border-black/5 flex flex-col justify-between">
+        <div>
+          <div class="flex items-center gap-3 mb-4 pb-3 border-b border-black/5">
+            <div class="w-9 h-9 rounded-2xl bg-black/5 flex items-center justify-center text-[#18181B]">
+              <i class="fa-solid fa-user text-xs"></i>
+            </div>
+            <h3 class="text-xs font-bold uppercase tracking-wider text-ink/40 font-display">Dettagli Cliente</h3>
           </div>
+          <div class="space-y-4">
+            <div>
+              <span class="text-[11px] text-ink/40 font-bold uppercase block tracking-wider mb-0.5">Nome e Cognome</span>
+              <span class="font-display font-black text-[#18181B] text-base"><?php echo htmlspecialchars($appointment['customer_name']); ?></span>
+            </div>
 
-          <div>
-            <span class="text-xs text-gray-400 font-bold uppercase block">Telefono / Cellulare</span>
-            <a href="tel:<?php echo htmlspecialchars($appointment['phone']); ?>" class="font-bold text-blue-600 hover:underline">
-              <i class="fa-solid fa-phone text-xs mr-1"></i> <?php echo htmlspecialchars($appointment['phone']); ?>
-            </a>
-          </div>
+            <div>
+              <span class="text-[11px] text-ink/40 font-bold uppercase block tracking-wider mb-1">Telefono / Cellulare</span>
+              <a href="tel:<?php echo htmlspecialchars($appointment['phone']); ?>" class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-[#F8F8F8] border border-black/5 text-xs font-bold text-ink hover:bg-[#18181B] hover:text-white transition-colors">
+                <i class="fa-solid fa-phone text-xs"></i>
+                <span><?php echo htmlspecialchars($appointment['phone']); ?></span>
+              </a>
+            </div>
 
-          <div>
-            <span class="text-xs text-gray-400 font-bold uppercase block">Indirizzo Email</span>
-            <a href="mailto:<?php echo htmlspecialchars($appointment['email']); ?>" class="font-bold text-blue-600 hover:underline">
-              <i class="fa-regular fa-envelope text-xs mr-1"></i> <?php echo htmlspecialchars($appointment['email']); ?>
-            </a>
+            <div>
+              <span class="text-[11px] text-ink/40 font-bold uppercase block tracking-wider mb-1">Indirizzo Email</span>
+              <a href="mailto:<?php echo htmlspecialchars($appointment['email']); ?>" class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-[#F8F8F8] border border-black/5 text-xs font-bold text-ink hover:bg-[#18181B] hover:text-white transition-colors">
+                <i class="fa-regular fa-envelope text-xs"></i>
+                <span><?php echo htmlspecialchars($appointment['email']); ?></span>
+              </a>
+            </div>
           </div>
         </div>
       </div>
 
       <!-- Vehicle Card -->
-      <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-        <h3 class="text-xs font-extrabold uppercase text-gray-400 tracking-wider mb-4 border-b pb-2">
-          <i class="fa-solid fa-car text-[#d32f2f] mr-1"></i> Dettagli Veicolo
-        </h3>
-        <div class="space-y-3 text-sm">
-          <div>
-            <span class="text-xs text-gray-400 font-bold uppercase block">Marca & Modello</span>
-            <span class="font-extrabold text-[#1a1c1e] text-base">
-              <?php echo htmlspecialchars($appointment['vehicle_brand'] . ' ' . $appointment['vehicle_model']); ?>
-            </span>
+      <div class="bg-white p-7 rounded-3xl shadow-sm border border-black/5 flex flex-col justify-between">
+        <div>
+          <div class="flex items-center gap-3 mb-4 pb-3 border-b border-black/5">
+            <div class="w-9 h-9 rounded-2xl bg-black/5 flex items-center justify-center text-[#18181B]">
+              <i class="fa-solid fa-car text-xs"></i>
+            </div>
+            <h3 class="text-xs font-bold uppercase tracking-wider text-ink/40 font-display">Dettagli Veicolo</h3>
           </div>
+          <div class="space-y-4">
+            <div>
+              <span class="text-[11px] text-ink/40 font-bold uppercase block tracking-wider mb-0.5">Marca & Modello</span>
+              <span class="font-display font-black text-[#18181B] text-base">
+                <?php echo htmlspecialchars($appointment['vehicle_brand'] . ' ' . $appointment['vehicle_model']); ?>
+              </span>
+            </div>
 
-          <div>
-            <span class="text-xs text-gray-400 font-bold uppercase block">Targa Veicolo</span>
-            <span class="inline-block bg-gray-100 border border-gray-300 font-mono font-black text-sm px-3 py-1 rounded text-gray-800 tracking-wider">
-              <?php echo htmlspecialchars($appointment['vehicle_registration']); ?>
-            </span>
+            <div>
+              <span class="text-[11px] text-ink/40 font-bold uppercase block tracking-wider mb-1">Targa Veicolo</span>
+              <span class="inline-block bg-[#18181B] text-white font-mono font-bold text-xs px-4 py-1.5 rounded-full shadow-sm tracking-wider">
+                <?php echo htmlspecialchars($appointment['vehicle_registration']); ?>
+              </span>
+            </div>
           </div>
         </div>
       </div>
@@ -169,17 +183,20 @@ require_once __DIR__ . '/admin-header.php';
     </div>
 
     <!-- Service Requested Card -->
-    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-      <h3 class="text-xs font-extrabold uppercase text-gray-400 tracking-wider mb-4 border-b pb-2">
-        <i class="fa-solid fa-wrench text-[#d32f2f] mr-1"></i> Servizio Richiesto
-      </h3>
+    <div class="bg-white p-7 rounded-3xl shadow-sm border border-black/5">
+      <div class="flex items-center gap-3 mb-4 pb-3 border-b border-black/5">
+        <div class="w-9 h-9 rounded-2xl bg-black/5 flex items-center justify-center text-[#18181B]">
+          <i class="fa-solid fa-wrench text-xs"></i>
+        </div>
+        <h3 class="text-xs font-bold uppercase tracking-wider text-ink/40 font-display">Servizio Richiesto</h3>
+      </div>
       <div class="flex items-center justify-between">
         <div>
-          <h4 class="text-lg font-black text-[#1a1c1e]"><?php echo htmlspecialchars($appointment['service_name'] ?? 'Servizio Meccanico'); ?></h4>
-          <p class="text-xs text-gray-500 font-semibold mt-1">Durata stimata: <?php echo intval($appointment['service_duration'] ?? 30); ?> minuti</p>
+          <h4 class="font-display font-black text-xl text-[#18181B]"><?php echo htmlspecialchars($appointment['service_name'] ?? 'Servizio Meccanico'); ?></h4>
+          <p class="text-xs text-ink/50 font-semibold mt-1">Durata stimata: <?php echo intval($appointment['service_duration'] ?? 30); ?> minuti</p>
         </div>
         <div class="text-right">
-          <span class="text-xl font-black text-[#d32f2f]">€<?php echo number_format($appointment['service_price'] ?? 0, 2); ?></span>
+          <span class="font-display font-black text-2xl text-[#18181B]">€<?php echo number_format($appointment['service_price'] ?? 0, 2); ?></span>
         </div>
       </div>
     </div>
@@ -187,16 +204,19 @@ require_once __DIR__ . '/admin-header.php';
   </div>
 
   <!-- Right Side: Status Management & Admin Notes Form -->
-  <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200 h-fit">
-    <h3 class="text-xs font-extrabold uppercase text-gray-400 tracking-wider mb-4 border-b pb-2">
-      <i class="fa-solid fa-sliders text-[#d32f2f] mr-1"></i> Gestione Stato & Note
-    </h3>
+  <div class="bg-white p-7 rounded-3xl shadow-sm border border-black/5 h-fit">
+    <div class="flex items-center gap-3 mb-5 pb-3 border-b border-black/5">
+      <div class="w-9 h-9 rounded-2xl bg-black/5 flex items-center justify-center text-[#18181B]">
+        <i class="fa-solid fa-sliders text-xs"></i>
+      </div>
+      <h3 class="text-xs font-bold uppercase tracking-wider text-ink/40 font-display">Gestione Stato & Note</h3>
+    </div>
 
-    <form method="POST" action="appointment-view.php?id=<?php echo $appointment['id']; ?>" class="space-y-6">
+    <form method="POST" action="appointment-view.php?id=<?php echo $appointment['id']; ?>" class="space-y-5">
       
       <div>
-        <label class="block text-xs font-extrabold text-gray-700 uppercase mb-2">Stato Appuntamento</label>
-        <select name="status" class="w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-lg font-extrabold text-sm focus:ring-2 focus:ring-[#d32f2f]">
+        <label class="block text-xs font-bold text-ink/60 uppercase tracking-wider mb-2 font-display">Stato Appuntamento</label>
+        <select name="status" class="w-full px-4 py-3 bg-[#F8F8F8] border border-black/10 rounded-2xl font-bold text-xs outline-none focus:border-[#18181B] cursor-pointer">
           <option value="Pending" <?php echo ($appointment['status'] === 'Pending') ? 'selected' : ''; ?>>Pending (In attesa)</option>
           <option value="Confirmed" <?php echo ($appointment['status'] === 'Confirmed') ? 'selected' : ''; ?>>Confirmed (Confermato)</option>
           <option value="Completed" <?php echo ($appointment['status'] === 'Completed') ? 'selected' : ''; ?>>Completed (Completato)</option>
@@ -205,12 +225,13 @@ require_once __DIR__ . '/admin-header.php';
       </div>
 
       <div>
-        <label class="block text-xs font-extrabold text-gray-700 uppercase mb-2">Note Cliente & Interna</label>
-        <textarea name="notes" rows="6" class="w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-lg text-sm font-medium focus:ring-2 focus:ring-[#d32f2f]" placeholder="Aggiungi dettagli o note sull'intervento..."><?php echo htmlspecialchars($appointment['notes'] ?? ''); ?></textarea>
+        <label class="block text-xs font-bold text-ink/60 uppercase tracking-wider mb-2 font-display">Note Cliente & Interna</label>
+        <textarea name="notes" rows="6" class="w-full p-4 bg-[#F8F8F8] border border-black/10 rounded-2xl text-xs font-medium outline-none focus:border-[#18181B]" placeholder="Aggiungi dettagli o note sull'intervento..."><?php echo htmlspecialchars($appointment['notes'] ?? ''); ?></textarea>
       </div>
 
-      <button type="submit" class="w-full bg-[#d32f2f] hover:bg-[#b71c1c] text-white font-extrabold uppercase py-3.5 rounded-lg shadow-lg transition-transform hover:-translate-y-0.5 text-sm flex items-center justify-center gap-2">
-        <i class="fa-solid fa-floppy-disk"></i> Salva Modifiche
+      <button type="submit" class="w-full bg-[#18181B] hover:bg-black text-white font-bold py-4 rounded-2xl shadow-md transition-all hover:scale-[1.01] active:scale-95 text-xs flex items-center justify-center gap-2">
+        <i class="fa-solid fa-floppy-disk text-xs"></i>
+        <span>Salva Modifiche</span>
       </button>
 
     </form>
