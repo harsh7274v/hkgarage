@@ -1,0 +1,12 @@
+# Environment variables
+.env
+.env.local
+.env.*
+.env*.local
+
+# Vendor & Dependencies
+/vendor/
+
+# OS files
+.DS_Store
+Thumbs.db
