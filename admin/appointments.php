@@ -2,6 +2,7 @@
 require_once __DIR__ . '/../includes/config.php';
 require_once __DIR__ . '/../includes/database.php';
 require_once __DIR__ . '/../includes/auth.php';
+require_once __DIR__ . '/../includes/mailer.php';
 
 $pageTitle = "Appuntamenti";
 
@@ -22,11 +23,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $stmt = $db->prepare("UPDATE appointments SET status = :status WHERE id = :id");
                 $stmt->execute([':status' => $newStatus, ':id' => $appointmentId]);
                 $actionMessage = "Stato dell'appuntamento #$appointmentId aggiornato a '$newStatus'.";
+                sendBookingStatusUpdateEmail($appointmentId, $newStatus);
             } catch (Exception $e) {
                 $actionError = "Errore durante l'aggiornamento: " . $e->getMessage();
             }
         }
-    } elseif ($action === 'delete' && $appointmentId > 0) {
+    }
+ elseif ($action === 'delete' && $appointmentId > 0) {
         try {
             $db = getDBConnection();
             $stmt = $db->prepare("DELETE FROM appointments WHERE id = :id");
@@ -37,6 +40,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 }
+
+// Include Header & Period Filter Logic
+require_once __DIR__ . '/admin-header.php';
 
 // Filters
 $statusFilter = $_GET['status'] ?? 'all';
@@ -61,6 +67,11 @@ try {
     if (!empty($dateFilter)) {
         $sql .= " AND a.booking_date = :date";
         $params[':date'] = $dateFilter;
+    } elseif (!empty($currentPeriod) && $currentPeriod !== 'all') {
+        list($pStart, $pEnd) = getPeriodDateBounds($currentPeriod);
+        $sql .= " AND a.booking_date BETWEEN :pstart AND :pend";
+        $params[':pstart'] = $pStart;
+        $params[':pend']   = $pEnd;
     }
 
     $sql .= " ORDER BY a.booking_date DESC, a.booking_time ASC";
@@ -70,8 +81,6 @@ try {
 } catch (Exception $e) {
     error_log("Fetch appointments error: " . $e->getMessage());
 }
-
-require_once __DIR__ . '/admin-header.php';
 ?>
 
 <?php if (!empty($actionMessage)): ?>

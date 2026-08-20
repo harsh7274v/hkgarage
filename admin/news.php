@@ -23,17 +23,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'delet
     }
 }
 
-// Fetch all news
+// Include Header & Period Filter Logic
+require_once __DIR__ . '/admin-header.php';
+
+// Fetch news filtered by active period
 $newsList = [];
 try {
     $db = getDBConnection();
-    $stmt = $db->query("SELECT * FROM news ORDER BY published_date DESC, id DESC");
+    if (!empty($currentPeriod) && $currentPeriod !== 'all') {
+        list($pStart, $pEnd) = getPeriodDateBounds($currentPeriod);
+        $stmt = $db->prepare("SELECT * FROM news WHERE published_date BETWEEN :pstart AND :pend ORDER BY published_date DESC, id DESC");
+        $stmt->execute([':pstart' => $pStart, ':pend' => $pEnd]);
+    } else {
+        $stmt = $db->query("SELECT * FROM news ORDER BY published_date DESC, id DESC");
+    }
     $newsList = $stmt->fetchAll();
 } catch (Exception $e) {
     error_log("Admin news fetch error: " . $e->getMessage());
 }
-
-require_once __DIR__ . '/admin-header.php';
 ?>
 
 <?php if (!empty($actionMessage)): ?>

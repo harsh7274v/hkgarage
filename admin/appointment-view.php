@@ -2,6 +2,7 @@
 require_once __DIR__ . '/../includes/config.php';
 require_once __DIR__ . '/../includes/database.php';
 require_once __DIR__ . '/../includes/auth.php';
+require_once __DIR__ . '/../includes/mailer.php';
 
 $appointmentId = intval($_GET['id'] ?? 0);
 if ($appointmentId <= 0) {
@@ -29,11 +30,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 ':id'     => $appointmentId
             ]);
             $message = "Appuntamento aggiornato con successo!";
+            sendBookingStatusUpdateEmail($appointmentId, $newStatus);
         } catch (Exception $e) {
             $error = "Errore durante l'aggiornamento: " . $e->getMessage();
         }
     }
 }
+
 
 // Fetch appointment details
 $appointment = null;

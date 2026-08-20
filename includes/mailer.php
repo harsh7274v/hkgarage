@@ -184,10 +184,13 @@ function generateCustomerEmailHTML(array $data): string {
               <tr>
                 <td style='padding:30px 30px 10px 30px; text-align:center;'>
                   <h2 style='color:#1a1c1e; margin:0 0 10px 0; font-size:22px; font-weight:800;'>
-                    Prenotazione Ricevuta con Successo!
+                    Richiesta di Prenotazione Ricevuta!
                   </h2>
-                  <p style='color:#555555; font-size:15px; line-height:1.5; margin:0;'>
-                    Ciao <strong>" . htmlspecialchars($data['customer_name']) . "</strong>, ti confermiamo che abbiamo ricevuto la tua richiesta di appuntamento per la tua vettura.
+                  <p style='color:#555555; font-size:15px; line-height:1.6; margin:0;'>
+                    Ciao <strong>" . htmlspecialchars($data['customer_name']) . "</strong>,<br>
+                    Grazie per aver prenotato con <strong>HK Garage</strong>!<br><br>
+                    La tua richiesta di appuntamento è stata ricevuta ed è attualmente in stato <strong style='color:#d32f2f;'>In Attesa (Pending)</strong>.<br>
+                    Riceverai a breve un'email di conferma definitiva dal nostro team per confermare il tuo appuntamento.
                   </p>
                 </td>
               </tr>
@@ -238,10 +241,10 @@ function generateCustomerEmailHTML(array $data): string {
                     </tr>
                     <tr>
                       <td style='padding:8px 0; font-size:14px; color:#4a5568;'>
-                        <strong>Stato:</strong>
+                        <strong>Stato Richiesta:</strong>
                       </td>
                       <td style='padding:8px 0; font-size:14px; color:#d32f2f; font-weight:bold; text-align:right;'>
-                        In Attesa di Conferma
+                        In Attesa di Conferma (Pending)
                       </td>
                     </tr>
                   </table>
@@ -462,3 +465,165 @@ function sendSocketSMTP(string $to, string $toName, string $subject, string $htm
 
     return (strpos($dataResp, '250') === 0);
 }
+
+/**
+ * Send booking status update or reschedule notification email to customer
+ */
+function sendBookingStatusUpdateEmail(int $appointmentId, string $status, ?string $newDate = null, ?string $newTime = null): bool {
+    try {
+        $db = getDBConnection();
+        $stmt = $db->prepare("
+            SELECT a.*, s.name as service_name 
+            FROM appointments a 
+            LEFT JOIN services s ON a.service_id = s.id 
+            WHERE a.id = :id
+        ");
+        $stmt->execute([':id' => $appointmentId]);
+        $app = $stmt->fetch();
+        if (!$app || empty($app['email'])) {
+            return false;
+        }
+
+        $customerName  = $app['customer_name'];
+        $customerEmail = $app['email'];
+        $serviceName   = $app['service_name'] ?? 'Servizio Meccanico';
+        $vehicle       = $app['vehicle_brand'] . ' ' . $app['vehicle_model'] . ' (' . strtoupper($app['vehicle_registration']) . ')';
+        $bookingDate   = !empty($newDate) ? date('d/m/Y', strtotime($newDate)) : date('d/m/Y', strtotime($app['booking_date']));
+        $bookingTime   = !empty($newTime) ? date('H:i', strtotime($newTime)) : date('H:i', strtotime($app['booking_time']));
+
+        $subject = "";
+        $statusTitle = "";
+        $statusColor = "#1a1c1e";
+        $badgeText = "";
+        $messageIntro = "";
+
+        if ($status === 'Confirmed') {
+            $subject = "Prenotazione Confermata! #" . $appointmentId . " - HK Garage";
+            $statusTitle = "La tua Prenotazione è stata CONFERMATA!";
+            $statusColor = "#10b981"; // Emerald green
+            $badgeText = "Confermato (Confirmed)";
+            $messageIntro = "Siamo lieti di informarti che il tuo appuntamento presso <strong>HK Garage</strong> è stato confermato ufficialmente dai nostri tecnici per la data e orario indicati.";
+        } elseif ($status === 'Cancelled') {
+            $subject = "Aggiornamento Prenotazione #" . $appointmentId . " - HK Garage";
+            $statusTitle = "Prenotazione Annullata";
+            $statusColor = "#e63946"; // Red
+            $badgeText = "Annullato (Cancelled)";
+            $messageIntro = "Ti informiamo che la tua richiesta di prenotazione #" . $appointmentId . " è stata annullata. Se desideri riprogrammare, puoi effettuare una nuova prenotazione dal nostro sito o contattarci telefonicamente.";
+        } else {
+            // Rescheduled / Modified
+            $subject = "Modifica Appuntamento #" . $appointmentId . " - HK Garage";
+            $statusTitle = "Data & Orario Appuntamento Modificati!";
+            $statusColor = "#f59e0b"; // Amber
+            $badgeText = "Data & Orario Modificati";
+            $messageIntro = "Ti informiamo che la data e/o l'orario del tuo appuntamento #" . $appointmentId . " presso <strong>HK Garage</strong> sono stati aggiornati dai nostri operatori.";
+        }
+
+        $htmlBody = "
+        <!DOCTYPE html>
+        <html lang='it'>
+        <head>
+          <meta charset='UTF-8'>
+          <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+          <title>{$subject}</title>
+        </head>
+        <body style='margin:0; padding:0; background-color:#f4f6f9; font-family: Arial, Helvetica, sans-serif;'>
+          <table role='presentation' width='100%' cellspacing='0' cellpadding='0' style='padding:20px 0;'>
+            <tr>
+              <td align='center'>
+                <table role='presentation' width='600' cellspacing='0' cellpadding='0' style='background-color:#ffffff; border-radius:12px; overflow:hidden; box-shadow:0 4px 15px rgba(0,0,0,0.08); border-top:6px solid {$statusColor};'>
+                  
+                  <tr style='background-color:#18181B;'>
+                    <td style='padding:30px; text-align:center;'>
+                      <h1 style='color:#ffffff; margin:0; font-size:24px; font-weight:900; letter-spacing:1px; text-transform:uppercase;'>
+                        HK <span style='color:#E63946;'>GARAGE</span>
+                      </h1>
+                      <p style='color:#a1a1aa; margin:5px 0 0 0; font-size:12px; text-transform:uppercase; font-weight:bold;'>
+                        Officina Meccanica &amp; Diagnosi Elettronica
+                      </p>
+                    </td>
+                  </tr>
+
+                  <tr>
+                    <td style='padding:30px 30px 10px 30px; text-align:center;'>
+                      <h2 style='color:#18181B; margin:0 0 10px 0; font-size:22px; font-weight:800;'>
+                        {$statusTitle}
+                      </h2>
+                      <p style='color:#4b5563; font-size:15px; line-height:1.6; margin:0;'>
+                        Ciao <strong>" . htmlspecialchars($customerName) . "</strong>,<br>
+                        {$messageIntro}
+                      </p>
+                    </td>
+                  </tr>
+
+                  <tr>
+                    <td style='padding:20px 30px;'>
+                      <table role='presentation' width='100%' cellspacing='0' cellpadding='0' style='background-color:#f8fafc; border-radius:8px; padding:20px; border:1px solid #e2e8f0;'>
+                        <tr>
+                          <td style='padding:8px 0; border-bottom:1px solid #e2e8f0; font-size:14px; color:#64748b;'><strong>ID Prenotazione:</strong></td>
+                          <td style='padding:8px 0; border-bottom:1px solid #e2e8f0; font-size:16px; color:#18181B; font-weight:bold; text-align:right;'>#" . htmlspecialchars($appointmentId) . "</td>
+                        </tr>
+                        <tr>
+                          <td style='padding:8px 0; border-bottom:1px solid #e2e8f0; font-size:14px; color:#64748b;'><strong>Servizio:</strong></td>
+                          <td style='padding:8px 0; border-bottom:1px solid #e2e8f0; font-size:14px; color:#18181B; font-weight:bold; text-align:right;'>" . htmlspecialchars($serviceName) . "</td>
+                        </tr>
+                        <tr>
+                          <td style='padding:8px 0; border-bottom:1px solid #e2e8f0; font-size:14px; color:#64748b;'><strong>Data Appuntamento:</strong></td>
+                          <td style='padding:8px 0; border-bottom:1px solid #e2e8f0; font-size:14px; color:#E63946; font-weight:bold; text-align:right;'>" . htmlspecialchars($bookingDate) . "</td>
+                        </tr>
+                        <tr>
+                          <td style='padding:8px 0; border-bottom:1px solid #e2e8f0; font-size:14px; color:#64748b;'><strong>Orario / Slot:</strong></td>
+                          <td style='padding:8px 0; border-bottom:1px solid #e2e8f0; font-size:14px; color:#E63946; font-weight:bold; text-align:right;'>" . htmlspecialchars($bookingTime) . "</td>
+                        </tr>
+                        <tr>
+                          <td style='padding:8px 0; border-bottom:1px solid #e2e8f0; font-size:14px; color:#64748b;'><strong>Veicolo:</strong></td>
+                          <td style='padding:8px 0; border-bottom:1px solid #e2e8f0; font-size:14px; color:#18181B; font-weight:bold; text-align:right;'>" . htmlspecialchars($vehicle) . "</td>
+                        </tr>
+                        <tr>
+                          <td style='padding:8px 0; font-size:14px; color:#64748b;'><strong>Stato Attuale:</strong></td>
+                          <td style='padding:8px 0; font-size:14px; color:{$statusColor}; font-weight:bold; text-align:right;'>{$badgeText}</td>
+                        </tr>
+                      </table>
+                    </td>
+                  </tr>
+
+                  <tr>
+                    <td style='padding:10px 30px 30px 30px;'>
+                      <table role='presentation' width='100%' cellspacing='0' cellpadding='0' style='background-color:#18181B; border-radius:8px; padding:20px; color:#ffffff;'>
+                        <tr>
+                          <td>
+                            <h4 style='margin:0 0 10px 0; color:#E63946; font-size:14px; text-transform:uppercase;'>
+                              📍 Officina HK Garage
+                            </h4>
+                            <p style='margin:0 0 5px 0; font-size:13px; color:#cbd5e1;'>
+                              Via Consortile della Conta, 3 - 24060 Costa di Mezzate (BG)
+                            </p>
+                            <p style='margin:0 0 5px 0; font-size:13px; color:#cbd5e1;'>
+                              📞 <strong>Tel:</strong> +39 035 123 4567 | ✉️ appointments@hkgarage.it
+                            </p>
+                          </td>
+                        </tr>
+                      </table>
+                    </td>
+                  </tr>
+
+                  <tr>
+                    <td style='background-color:#f1f5f9; padding:20px; text-align:center; font-size:12px; color:#64748b;'>
+                      &copy; " . date('Y') . " HK Garage SNC. Notifica automatica del sistema di gestione appuntamenti.
+                    </td>
+                  </tr>
+
+                </table>
+              </td>
+            </tr>
+          </table>
+        </body>
+        </html>
+        ";
+
+        return sendEmail($customerEmail, $customerName, $subject, $htmlBody);
+    } catch (Throwable $e) {
+        error_log("Failed to send status update email for appointment #$appointmentId: " . $e->getMessage());
+        return false;
+    }
+}
+

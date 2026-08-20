@@ -149,7 +149,106 @@
         document.documentElement.classList.remove('overflow-hidden');
       }
     }
+  </script>
 
+  <!-- Admin-Themed Instant Thank You Confirmation Modal -->
+  <div id="thankYouModal" class="fixed inset-0 z-[130] bg-black/65 backdrop-blur-md flex items-center justify-center p-4 lg:p-6 hidden animate-fade-in" onclick="closeThankYouModal()">
+    <div class="bg-[#ECECEC] max-w-md w-full rounded-[28px] overflow-hidden shadow-2xl border border-black/10 relative text-ink font-sans p-5 sm:p-6" onclick="event.stopPropagation()">
+      
+      <!-- Obsidian Hero Banner Header -->
+      <div class="bg-[#18181B] text-white p-5 rounded-2xl relative overflow-hidden shadow-md mb-4">
+        <div class="flex items-center justify-between mb-3">
+          <div class="w-10 h-10 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-xl font-bold border border-emerald-500/30">
+            <i class="fa-solid fa-circle-check"></i>
+          </div>
+          <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/10 text-white text-[11px] font-bold font-display uppercase tracking-wider">
+            <span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
+            In Attesa (Pending)
+          </span>
+        </div>
+        <h3 class="font-display font-black text-xl text-white leading-tight">
+          Richiesta di Prenotazione Inviata!
+        </h3>
+        <p class="text-xs text-white/70 mt-1">
+          Grazie per aver prenotato con <strong class="text-white">HK Garage</strong>
+        </p>
+      </div>
+
+      <!-- Booking Details Card (Floating White Card) -->
+      <div class="bg-white rounded-2xl p-4 border border-black/5 shadow-sm space-y-2.5 mb-4 text-xs font-medium text-ink">
+        <div class="flex justify-between items-center pb-2 border-b border-black/5">
+          <span class="text-ink/60 font-semibold">Cliente:</span>
+          <span id="tyCustomerName" class="font-bold text-ink text-right"></span>
+        </div>
+        <div class="flex justify-between items-center pb-2 border-b border-black/5">
+          <span class="text-ink/60 font-semibold">Email:</span>
+          <span id="tyCustomerEmail" class="font-bold text-ink text-right"></span>
+        </div>
+        <div class="flex justify-between items-center pb-2 border-b border-black/5">
+          <span class="text-ink/60 font-semibold">Servizio:</span>
+          <span id="tyServiceName" class="font-bold text-brand text-right"></span>
+        </div>
+        <div class="flex justify-between items-center pb-2 border-b border-black/5">
+          <span class="text-ink/60 font-semibold">Data & Orario:</span>
+          <span id="tyDateTime" class="font-bold text-ink text-right"></span>
+        </div>
+        <div class="flex justify-between items-center">
+          <span class="text-ink/60 font-semibold">Veicolo:</span>
+          <span id="tyVehicle" class="inline-block px-2.5 py-0.5 rounded-md bg-[#18181B] text-white font-mono font-bold text-[11px]"></span>
+        </div>
+      </div>
+
+      <!-- Notification Helper Box -->
+      <div class="bg-white/80 rounded-2xl p-3.5 border border-black/5 text-xs text-ink/70 leading-relaxed mb-5 flex items-start gap-2.5">
+        <i class="fa-solid fa-envelope-circle-check text-brand text-base flex-shrink-0 mt-0.5"></i>
+        <div>
+          Riceverai a breve un'email di conferma definitiva dal nostro team all'indirizzo indicato.
+        </div>
+      </div>
+
+      <!-- Action Button -->
+      <button type="button" onclick="closeThankYouModal()" class="w-full h-12 bg-[#18181B] hover:bg-black text-white font-bold rounded-full text-sm shadow-md transition-all hover:scale-[1.01] active:scale-[0.99] flex items-center justify-center gap-2 font-display uppercase tracking-wider">
+        <span>Perfetto, Grazie!</span>
+        <i class="fa-solid fa-arrow-right text-xs"></i>
+      </button>
+
+    </div>
+  </div>
+
+  <script>
+    function showThankYouModal(details) {
+      const nameElem = document.getElementById('tyCustomerName');
+      const emailElem = document.getElementById('tyCustomerEmail');
+      const serviceElem = document.getElementById('tyServiceName');
+      const dtElem = document.getElementById('tyDateTime');
+      const vehicleElem = document.getElementById('tyVehicle');
+
+      if (nameElem) nameElem.textContent = details.customerName || '';
+      if (emailElem) emailElem.textContent = details.customerEmail || '';
+      if (serviceElem) serviceElem.textContent = details.serviceName || '';
+      if (dtElem) dtElem.textContent = (details.date || '') + ' @ ' + (details.time || '');
+      if (vehicleElem) vehicleElem.textContent = details.vehicle || '';
+
+      const modal = document.getElementById('thankYouModal');
+      if (modal) {
+        modal.classList.remove('hidden');
+        document.body.classList.add('overflow-hidden');
+      }
+    }
+
+    function closeThankYouModal() {
+      const modal = document.getElementById('thankYouModal');
+      if (modal) {
+        modal.classList.add('hidden');
+        document.body.classList.remove('overflow-hidden');
+      }
+      if (window.location.pathname.includes('booking.php')) {
+        window.location.href = 'index.php';
+      }
+    }
+  </script>
+
+  <script>
     // ── 5-Minute Cookie & LocalStorage Slot Availability Cache ───────────────
     const SLOTS_CACHE_TTL_MS = 5 * 60 * 1000; // 5 Minutes (300,000 ms)
 
@@ -170,7 +269,6 @@
     function getSlotsCacheCookie(dateStr) {
       const cookieName = `hk_slots_${dateStr}`;
       
-      // 1. Try reading from Document Cookie
       const nameEQ = cookieName + "=";
       const ca = document.cookie.split(';');
       for (let i = 0; i < ca.length; i++) {
@@ -185,7 +283,6 @@
         }
       }
 
-      // 2. Fallback: LocalStorage
       try {
         const localData = localStorage.getItem(cookieName);
         if (localData) {
@@ -198,7 +295,7 @@
         }
       } catch (e) {}
 
-      return null; // Cache miss or expired (> 5 minutes)
+      return null;
     }
 
     function clearSlotsCacheCookie(dateStr) {
@@ -223,7 +320,7 @@
           dateFormat: 'Y-m-d',
           disable: [
             function(date) {
-              return (date.getDay() === 0); // Disable Sundays
+              return (date.getDay() === 0);
             }
           ],
           onChange: function(selectedDates, dateStr) {
@@ -260,18 +357,14 @@
         timeSelect.innerHTML = '<option value="">Caricamento orari...</option>';
         const serviceId = serviceSelect ? serviceSelect.value : 1;
 
-        // 1. Check 5-minute cookie cache unless forced bypass
         if (!forceBypassCache) {
           const cachedData = getSlotsCacheCookie(dateStr);
           if (cachedData) {
-            console.log(`[Cache Hit - 5 Min Cookie] Loaded slot availability for ${dateStr} from cookie cache.`);
             renderSlotsToSelect(cachedData);
             return;
           }
         }
 
-        // 2. Cache miss or expired (> 5 min) -> Fetch fresh from Database API
-        console.log(`[Cache Miss / Expired] Fetching fresh availability for ${dateStr} from database API...`);
         fetch(`api/get-slots.php?date=${dateStr}&service_id=${serviceId}`)
           .then(res => res.json())
           .then(data => {
@@ -308,63 +401,51 @@
         });
       }
 
-      // Handle Modal AJAX Booking Submission
+      // Handle Modal AJAX Booking Submission (INSTANT NON-BLOCKING OPTIMISTIC CONFIRMATION)
       const form = document.getElementById('modalBookingForm');
       if (form) {
         form.addEventListener('submit', function(e) {
           e.preventDefault();
 
-          const submitBtn = document.getElementById('modalSubmitBtn');
-          if (submitBtn) {
-            submitBtn.disabled = true;
-            submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i> Invio in corso...';
-          }
-
           const formData = new FormData(form);
           const bookedDate = formData.get('booking_date');
+          const serviceSelectElem = document.getElementById('modalServiceSelect');
+          const customServiceVal = formData.get('custom_service');
 
+          let selectedServiceName = '';
+          if (serviceSelectElem && serviceSelectElem.value === 'other' && customServiceVal) {
+            selectedServiceName = 'Altro: ' + customServiceVal;
+          } else if (serviceSelectElem && serviceSelectElem.selectedIndex >= 0) {
+            selectedServiceName = serviceSelectElem.options[serviceSelectElem.selectedIndex].text;
+          }
+
+          const customerDetails = {
+            customerName: formData.get('customer_name'),
+            customerEmail: formData.get('email'),
+            serviceName: selectedServiceName,
+            date: formData.get('booking_date'),
+            time: formData.get('booking_time'),
+            vehicle: (formData.get('vehicle_brand') || '') + ' ' + (formData.get('vehicle_model') || '') + ' (' + (formData.get('vehicle_registration') || '').toUpperCase() + ')'
+          };
+
+          // 1. INSTANTLY close booking modal & show admin-themed thank you modal (Zero latency!)
+          closeBookingModal();
+          showThankYouModal(customerDetails);
+          form.reset();
+
+          // 2. Perform backend DB save & PHPMailer emails asynchronously in the background
           fetch('api/book-appointment.php', {
             method: 'POST',
             body: formData
           })
           .then(res => res.json())
           .then(data => {
-            if (data.success) {
-              // Invalidate 5-minute cookie cache for this date so new lookups get updated slots
+            if (data && data.success) {
               clearSlotsCacheCookie(bookedDate);
-
-              closeBookingModal();
-              Swal.fire({
-                icon: 'success',
-                title: 'Prenotazione Confermata!',
-                html: `Grazie <strong>${formData.get('customer_name')}</strong>!<br>La tua prenotazione è stata ricevuta con successo.<br><br>Abbiamo inviato un'email di conferma a <strong>${formData.get('email')}</strong> con tutti i dettagli.`,
-                confirmButtonColor: '#E63946',
-                confirmButtonText: 'Ottimo, Grazie!'
-              });
-              form.reset();
-            } else {
-              Swal.fire({
-                icon: 'error',
-                title: 'Impossibile completare',
-                text: data.message || 'Si è verificato un errore durante la prenotazione.',
-                confirmButtonColor: '#0B1B2B'
-              });
             }
           })
           .catch(err => {
-            console.error('Booking submission error:', err);
-            Swal.fire({
-              icon: 'error',
-              title: 'Errore di connessione',
-              text: 'Si è verificato un errore di rete. Riprova più tardi.',
-              confirmButtonColor: '#0B1B2B'
-            });
-          })
-          .finally(() => {
-            if (submitBtn) {
-              submitBtn.disabled = false;
-              submitBtn.innerHTML = '<span>Invia prenotazione</span><i class="fa-solid fa-paper-plane text-xs"></i>';
-            }
+            console.error('Background booking submission error:', err);
           });
         });
       }

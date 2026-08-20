@@ -188,8 +188,7 @@ try {
     echo json_encode([
         'success'         => true,
         'appointment_id'  => $appointmentId,
-        'message'         => 'Prenotazione confermata! Codice prenotazione: #' . $appointmentId . '.' .
-                             ($emailResults['customer_email_sent'] ? ' Una conferma è stata inviata alla tua email.' : ''),
+        'message'         => 'Richiesta inviata con successo! Codice: #' . $appointmentId . '. Stato: In Attesa (Pending). Riceverai a breve un\'email di conferma da HK Garage.',
         'email_sent'      => $emailResults['customer_email_sent'],
         'garage_notified' => $emailResults['garage_email_sent']
     ]);

@@ -107,7 +107,7 @@ require_once __DIR__ . '/includes/header.php';
                 <option value="">-- Seleziona un servizio dall'elenco --</option>
                 <?php foreach ($services as $srv): ?>
                   <option value="<?php echo $srv['id']; ?>" data-duration="<?php echo $srv['duration']; ?>">
-                    <?php echo htmlspecialchars($srv['name']); ?> (Stima: <?php echo $srv['duration']; ?> min - €<?php echo number_format($srv['price'], 2); ?>)
+                    <?php echo htmlspecialchars($srv['name']); ?> (Stima: <?php echo $srv['duration']; ?> min)
                   </option>
                 <?php endforeach; ?>
                 <option value="other">Altro (Specificare)</option>
@@ -302,7 +302,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
 
-  // Handle Form Submission
+  // Handle Form Submission (INSTANT NON-BLOCKING OPTIMISTIC CONFIRMATION)
   bookingForm.addEventListener('submit', function(e) {
     e.preventDefault();
 
@@ -316,68 +316,46 @@ document.addEventListener('DOMContentLoaded', function() {
       return;
     }
 
-    submitBtn.disabled = true;
-    submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i> Invio prenotazione in corso...';
-
     const formData = new FormData(bookingForm);
+    const bookedDate = formData.get('booking_date');
+    const serviceSelectElem = document.getElementById('service_id');
+    const customServiceVal = formData.get('custom_service');
 
+    let selectedServiceName = '';
+    if (serviceSelectElem && serviceSelectElem.value === 'other' && customServiceVal) {
+      selectedServiceName = 'Altro: ' + customServiceVal;
+    } else if (serviceSelectElem && serviceSelectElem.selectedIndex >= 0) {
+      selectedServiceName = serviceSelectElem.options[serviceSelectElem.selectedIndex].text;
+    }
+
+    const customerDetails = {
+      customerName: formData.get('customer_name'),
+      customerEmail: formData.get('email'),
+      serviceName: selectedServiceName,
+      date: formData.get('booking_date'),
+      time: formData.get('booking_time'),
+      vehicle: (formData.get('vehicle_brand') || '') + ' ' + (formData.get('vehicle_model') || '') + ' (' + (formData.get('vehicle_registration') || '').toUpperCase() + ')'
+    };
+
+    // 1. INSTANTLY show admin-themed thank you modal (Zero latency!)
+    showThankYouModal(customerDetails);
+
+    // 2. Perform backend DB save & PHPMailer emails asynchronously in the background
     fetch('api/book-appointment.php', {
       method: 'POST',
       body: formData
     })
     .then(res => res.json())
     .then(data => {
-      submitBtn.disabled = false;
-      submitBtn.innerHTML = '<i class="fa-solid fa-check-circle mr-2"></i> Conferma e Invia Prenotazione';
-
-      if (data.success) {
-        Swal.fire({
-          icon: 'success',
-          title: 'Prenotazione Confermata!',
-          html: `
-            <div class="text-left text-sm space-y-2 mt-2">
-              <p>${data.message}</p>
-              <div class="bg-cream p-4 rounded-2xl border border-ink/10 text-xs space-y-1">
-                <p><strong>Codice:</strong> #${data.appointment_id}</p>
-                <p><strong>Data:</strong> ${bookingDateInput.value}</p>
-                <p><strong>Orario:</strong> ${bookingTimeInput.value}</p>
-              </div>
-              <p class="text-xs text-ink/60 font-medium">Abbiamo inviato un'email di conferma all'indirizzo indicato.</p>
-            </div>
-          `,
-          confirmButtonColor: '#E63946',
-          confirmButtonText: 'Ottimo, grazie!'
-        }).then(() => {
-          bookingForm.reset();
-          fp.clear();
-          slotsContainer.innerHTML = '<p class="text-xs text-ink/50 font-semibold text-center">Seleziona prima una data per caricare gli orari disponibili.</p>';
-        });
-      } else {
-        Swal.fire({
-          icon: 'error',
-          title: 'Attenzione',
-          text: data.message || 'Impossibile completare la prenotazione.',
-          confirmButtonColor: '#0B1B2B'
-        });
-        if (bookingDateInput.value) {
-          loadTimeSlots(bookingDateInput.value);
-        }
+      if (data && data.success) {
+        clearSlotsCacheCookie(bookedDate);
       }
     })
     .catch(err => {
-      console.error(err);
-      submitBtn.disabled = false;
-      submitBtn.innerHTML = '<i class="fa-solid fa-check-circle mr-2"></i> Conferma e Invia Prenotazione';
-      Swal.fire({
-        icon: 'error',
-        title: 'Errore',
-        text: 'Errore durante la comunicazione con il server.',
-        confirmButtonColor: '#0B1B2B'
-      });
+      console.error('Background booking submission error:', err);
     });
   });
 });
 </script>
 
 <?php require_once __DIR__ . '/includes/footer.php'; ?>
-
