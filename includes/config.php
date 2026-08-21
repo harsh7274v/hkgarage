@@ -32,7 +32,7 @@ if (file_exists($envPath)) {
 
 // Site Configuration
 define('SITE_NAME', 'HK Garage');
-define('SITE_SUBTITLE', 'Officina Meccanica Costa di Mezzate');
+define('SITE_SUBTITLE', 'Officina Meccanica Villa Landri');
 define('SITE_URL', getenv('SITE_URL') ?: 'http://localhost:8000'); // Adjust for deployment
 
 // Database Configuration
@@ -46,11 +46,11 @@ define('DB_CHARSET', 'utf8mb4');
 // Mail Configuration (PHPMailer with Aruba SMTP)
 define('MAIL_HOST', getenv('MAIL_HOST') ?: 'smtps.aruba.it');
 define('MAIL_PORT', getenv('MAIL_PORT') ?: 465);
-define('MAIL_USER', getenv('MAIL_USER') ?: 'appointments@hkgarage.it');
+define('MAIL_USER', getenv('MAIL_USER') ?: 'hkgarage24@gmail.com');
 define('MAIL_PASS', getenv('MAIL_PASS') ?: '');
-define('MAIL_FROM', getenv('MAIL_FROM') ?: 'appointments@hkgarage.it');
+define('MAIL_FROM', getenv('MAIL_FROM') ?: 'hkgarage24@gmail.com');
 define('MAIL_FROM_NAME', 'HK Garage');
-define('GARAGE_NOTIFICATION_EMAIL', getenv('GARAGE_NOTIFICATION_EMAIL') ?: 'appointments@hkgarage.it');
+define('GARAGE_NOTIFICATION_EMAIL', getenv('GARAGE_NOTIFICATION_EMAIL') ?: 'hkgarage24@gmail.com');
 
 // Timezone
 date_default_timezone_set('Europe/Rome');

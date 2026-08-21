@@ -7,8 +7,8 @@ $currentPage = basename($_SERVER['PHP_SELF']);
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title><?php echo isset($pageTitle) ? htmlspecialchars($pageTitle) . ' | ' . SITE_NAME : SITE_NAME . ' | Officina Meccanica Costa di Mezzate'; ?></title>
-  <meta name="description" content="HK Garage SNC di Harshit & Karan. Riparazioni, manutenzione e assistenza auto a Costa di Mezzate (BG).">
+  <title><?php echo isset($pageTitle) ? htmlspecialchars($pageTitle) . ' | ' . SITE_NAME : SITE_NAME . ' | Officina Meccanica Villa Landri'; ?></title>
+  <meta name="description" content="HK Garage di Harshit & Karan. Riparazioni, manutenzione e assistenza auto a Villa Landri (BG).">
   
   <!-- Google Fonts: Montserrat (Industrial Automotive Headings) & Inter (Clean Readable Body) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -203,7 +203,7 @@ $currentPage = basename($_SERVER['PHP_SELF']);
   <!-- Fixed Glassmorphism Header Navigation -->
   <header id="mainHeader" class="fixed top-0 left-0 right-0 z-50 transition-[background,box-shadow,backdrop-filter] duration-300 bg-white/90 backdrop-blur-xl border-b border-ink/5 shadow-sm">
     <div class="max-w-7xl mx-auto px-5 lg:px-8">
-      <div class="flex items-center justify-between h-20">
+      <div class="grid grid-cols-[auto_1fr_auto] items-center h-20 gap-4">
         
         <!-- Logo -->
         <a href="index.php#home" class="flex items-center gap-3 group">
@@ -212,36 +212,33 @@ $currentPage = basename($_SERVER['PHP_SELF']);
           </div>
           <div class="leading-tight">
             <div class="font-black text-ink text-[15px] tracking-tight font-display">HK GARAGE</div>
-            <div class="text-[10px] font-semibold text-brand tracking-[0.15em]">SNC · HARSHIT & KARAN</div>
+            <div class="text-[10px] font-semibold text-brand tracking-[0.15em]">HARSHIT & KARAN</div>
           </div>
         </a>
 
         <!-- Desktop Navigation -->
-        <nav class="hidden lg:flex items-center gap-1">
-          <a href="index.php#home" class="px-4 py-2 text-sm font-semibold text-ink/70 hover:text-ink rounded-lg hover:bg-ink/5 transition-colors">Home</a>
-          <a href="index.php#servizi" class="px-4 py-2 text-sm font-semibold text-ink/70 hover:text-ink rounded-lg hover:bg-ink/5 transition-colors">Servizi</a>
-          <a href="index.php#chi-siamo" class="px-4 py-2 text-sm font-semibold text-ink/70 hover:text-ink rounded-lg hover:bg-ink/5 transition-colors">Chi Siamo</a>
-          <a href="index.php#galleria" class="px-4 py-2 text-sm font-semibold text-ink/70 hover:text-ink rounded-lg hover:bg-ink/5 transition-colors">Galleria</a>
-          <a href="index.php#recensioni" class="px-4 py-2 text-sm font-semibold text-ink/70 hover:text-ink rounded-lg hover:bg-ink/5 transition-colors">Recensioni</a>
-          <a href="news.php" class="px-4 py-2 text-sm font-bold text-brand hover:text-brand-dark rounded-lg hover:bg-brand/5 transition-colors flex items-center gap-1.5">
+        <nav class="hidden lg:flex items-center justify-center gap-0.5">
+          <a href="index.php#home" class="px-3 py-2 text-sm font-semibold text-ink/70 hover:text-ink rounded-lg hover:bg-ink/5 transition-colors whitespace-nowrap">Home</a>
+          <a href="index.php#servizi" class="px-3 py-2 text-sm font-semibold text-ink/70 hover:text-ink rounded-lg hover:bg-ink/5 transition-colors whitespace-nowrap">Servizi</a>
+          <a href="index.php#chi-siamo" class="px-3 py-2 text-sm font-semibold text-ink/70 hover:text-ink rounded-lg hover:bg-ink/5 transition-colors whitespace-nowrap">Chi Siamo</a>
+          <a href="index.php#galleria" class="px-3 py-2 text-sm font-semibold text-ink/70 hover:text-ink rounded-lg hover:bg-ink/5 transition-colors whitespace-nowrap">Galleria</a>
+          <a href="index.php#recensioni" class="px-3 py-2 text-sm font-semibold text-ink/70 hover:text-ink rounded-lg hover:bg-ink/5 transition-colors whitespace-nowrap">Recensioni</a>
+          <a href="news.php" class="px-3 py-2 text-sm font-bold text-brand hover:text-brand-dark rounded-lg hover:bg-brand/5 transition-colors flex items-center gap-1.5 whitespace-nowrap">
             <span class="w-2 h-2 rounded-full bg-brand animate-pulse"></span> News
           </a>
-          <a href="contact.php" class="px-4 py-2 text-sm font-semibold text-ink/70 hover:text-ink rounded-lg hover:bg-ink/5 transition-colors">Contatti</a>
+          <a href="contact.php" class="px-3 py-2 text-sm font-semibold text-ink/70 hover:text-ink rounded-lg hover:bg-ink/5 transition-colors whitespace-nowrap">Contatti</a>
         </nav>
 
         <!-- Right Header Actions -->
         <div class="hidden lg:flex items-center gap-4">
-          <a href="tel:+390351234567" class="flex items-center gap-2 text-sm font-bold text-ink hover:text-brand transition-colors">
-            <i class="fa-solid fa-phone text-xs"></i>
-            035 123 4567
+          <a href="tel:+393202819584" class="flex items-center gap-2 text-sm font-bold text-ink hover:text-brand transition-colors group">
+            <img src="assets/logos/contact.webp" alt="Telefono HK Garage" class="w-9 h-9 object-contain transition-transform group-hover:scale-105">
+            <span>320 281 9584</span>
           </a>
           <button onclick="openBookingModal()" class="btn-metallic text-white rounded-full px-6 h-11 font-semibold text-sm transition-all hover:scale-105 active:scale-95 flex items-center gap-2">
             <i class="fa-solid fa-calendar-check text-xs text-brand"></i>
             Prenota ora
           </button>
-          <a href="admin/login.php" class="text-ink/40 hover:text-brand transition-colors p-2 text-sm" title="Area Riservata Admin">
-            <i class="fa-solid fa-user-lock"></i>
-          </a>
         </div>
 
         <!-- Mobile Toggle Button -->
@@ -261,6 +258,10 @@ $currentPage = basename($_SERVER['PHP_SELF']);
         <a href="index.php#recensioni" class="px-3 py-3 text-base font-medium text-ink hover:bg-ink/5 rounded-lg">Recensioni</a>
         <a href="news.php" class="px-3 py-3 text-base font-bold text-brand hover:bg-brand/5 rounded-lg">News & Aggiornamenti</a>
         <a href="contact.php" class="px-3 py-3 text-base font-medium text-ink hover:bg-ink/5 rounded-lg">Contatti</a>
+        <a href="tel:+393202819584" class="w-full bg-ink/5 hover:bg-ink/10 text-ink font-bold text-sm py-3 px-4 rounded-xl flex items-center justify-center gap-2 mt-2 transition-colors">
+          <img src="assets/logos/contact.webp" alt="Telefono" class="w-5 h-5 object-contain">
+          320 281 9584
+        </a>
         <button onclick="openBookingModal()" class="w-full bg-brand text-white rounded-full mt-2 h-12 font-bold flex items-center justify-center gap-2 shadow-md">
           <i class="fa-solid fa-calendar-check"></i> Prenota ora
         </button>

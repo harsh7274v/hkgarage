@@ -30,7 +30,7 @@ require_once __DIR__ . '/includes/header.php';
       <div>
         <div class="inline-flex items-center gap-2 mb-4">
           <span class="w-8 h-1 bg-brand rounded-full"></span>
-          <span class="text-xs font-extrabold text-brand tracking-[0.2em] uppercase font-display">HK GARAGE SNC</span>
+          <span class="text-xs font-extrabold text-brand tracking-[0.2em] uppercase font-display">HK GARAGE</span>
         </div>
         <h2 class="font-display font-black text-2xl sm:text-3xl text-ink mb-8">Informazioni Officina</h2>
         
@@ -41,8 +41,8 @@ require_once __DIR__ . '/includes/header.php';
             </div>
             <div>
               <h3 class="text-xs uppercase text-ink/40 font-black tracking-wider font-display mb-1">DOVE SIAMO</h3>
-              <p class="font-bold text-ink text-lg font-display">HK Garage SNC</p>
-              <p class="text-ink/70 text-sm leading-relaxed">Via Consortile della Conta, 3<br>24060 Costa di Mezzate (BG)</p>
+              <p class="font-bold text-ink text-lg font-display">HK Garage</p>
+              <p class="text-ink/70 text-sm leading-relaxed">via dei Livelli di Sopra, 3A<br>24060 Villa Landri (BG)</p>
             </div>
           </div>
 
@@ -52,7 +52,7 @@ require_once __DIR__ . '/includes/header.php';
             </div>
             <div>
               <h3 class="text-xs uppercase text-ink/40 font-black tracking-wider font-display mb-1">TELEFONO & WHATSAPP</h3>
-              <a href="tel:+390351234567" class="font-bold text-ink hover:text-brand text-lg font-display transition-colors">+39 035 123 4567</a>
+              <a href="tel:+393202819584" class="font-bold text-ink hover:text-brand text-lg font-display transition-colors">320 281 9584</a>
               <p class="text-ink/60 text-sm">Assistenza diretta: Harshit & Karan</p>
             </div>
           </div>
@@ -62,9 +62,9 @@ require_once __DIR__ . '/includes/header.php';
               <i class="fa-solid fa-clock"></i>
             </div>
             <div>
-              <h3 class="text-xs uppercase text-ink/40 font-black tracking-wider font-display mb-1">ORARI DI LAVORO</h3>
-              <p class="font-bold text-ink text-sm">Lunedì – Venerdì: 08:00 – 12:30 / 14:00 – 18:30</p>
-              <p class="font-bold text-ink text-sm">Sabato: 08:00 – 12:00</p>
+              <h3 class="text-xs uppercase text-ink/40 font-black tracking-wider font-display mb-1">ORARI APERTURA</h3>
+              <p class="font-bold text-ink text-sm">Lunedì – Venerdì: 08:00 – 12:30 / 14:00 – 19:00</p>
+              <p class="font-bold text-ink text-sm">Sabato: 08:00 – 12:00 <span class="text-ink/60 font-medium text-xs">(oppure su appuntamento)</span></p>
               <p class="text-brand font-bold text-sm">Domenica: Chiuso</p>
             </div>
           </div>
@@ -72,7 +72,7 @@ require_once __DIR__ . '/includes/header.php';
       </div>
 
       <div class="pt-8 mt-8 border-t border-ink/10 flex items-center gap-3">
-        <a href="https://wa.me/390351234567" target="_blank" rel="noopener" class="flex-1 py-3 px-4 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm rounded-xl text-center transition-colors flex items-center justify-center gap-2">
+        <a href="https://wa.me/393202819584" target="_blank" rel="noopener" class="flex-1 py-3 px-4 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm rounded-xl text-center transition-colors flex items-center justify-center gap-2">
           <i class="fa-brands fa-whatsapp text-base"></i> Scrivici su WhatsApp
         </a>
       </div>

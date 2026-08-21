@@ -11,11 +11,11 @@
             </div>
             <div class="leading-tight">
               <div class="font-black text-white text-[15px] font-display">HK GARAGE</div>
-              <div class="text-[10px] font-semibold text-brand tracking-[0.15em]">SNC · HARSHIT & KARAN</div>
+              <div class="text-[10px] font-semibold text-brand tracking-[0.15em]">HARSHIT & KARAN</div>
             </div>
           </div>
           <p class="text-sm text-white/60 leading-relaxed max-w-sm mb-6 font-normal">
-            La tua officina di fiducia a Costa di Mezzate. Meccanica, diagnosi elettronica e passione per l'auto dal 2010.
+            La tua officina di fiducia a Villa Landri. Meccanica, diagnosi elettronica e passione per l'auto dal 2010.
           </p>
           <div class="flex items-center gap-3">
             <a href="https://instagram.com" target="_blank" rel="noopener" class="w-10 h-10 rounded-full bg-white/5 hover:bg-brand transition-colors flex items-center justify-center text-white" aria-label="Instagram">
@@ -24,8 +24,8 @@
             <a href="https://facebook.com" target="_blank" rel="noopener" class="w-10 h-10 rounded-full bg-white/5 hover:bg-brand transition-colors flex items-center justify-center text-white" aria-label="Facebook">
               <i class="fa-brands fa-facebook-f text-sm"></i>
             </a>
-            <a href="https://wa.me/390351234567" target="_blank" rel="noopener" class="w-10 h-10 rounded-full bg-white/5 hover:bg-brand transition-colors flex items-center justify-center text-white" aria-label="WhatsApp">
-              <i class="fa-brands fa-whatsapp text-sm"></i>
+            <a href="https://wa.me/393202819584" target="_blank" rel="noopener" class="w-10 h-10 rounded-full bg-emerald-500/10 hover:bg-emerald-500 text-emerald-400 hover:text-white transition-all hover:scale-105 flex items-center justify-center" aria-label="WhatsApp">
+              <i class="fa-brands fa-whatsapp text-base"></i>
             </a>
           </div>
         </div>
@@ -48,10 +48,10 @@
         <div>
           <div class="text-xs font-black tracking-[0.2em] uppercase text-white/50 mb-4 font-display">CONTATTI & ORARI</div>
           <ul class="space-y-2.5 text-sm text-white/70 font-normal">
-            <li><i class="fa-solid fa-phone text-brand mr-2 text-xs"></i> +39 035 123 4567</li>
-            <li><i class="fa-solid fa-envelope text-brand mr-2 text-xs"></i> appointments@hkgarage.it</li>
-            <li class="leading-relaxed"><i class="fa-solid fa-location-dot text-brand mr-2 text-xs"></i> Via Consortile della Conta, 3<br>24060 Costa di Mezzate (BG)</li>
-            <li class="pt-2 text-xs text-white/50"><i class="fa-solid fa-clock text-brand mr-1"></i> Lun - Ven 08:00 - 18:30</li>
+            <li><i class="fa-solid fa-phone text-brand mr-2 text-xs"></i> 320 281 9584</li>
+            <li><i class="fa-solid fa-envelope text-brand mr-2 text-xs"></i> hkgarage24@gmail.com</li>
+            <li class="leading-relaxed"><i class="fa-solid fa-location-dot text-brand mr-2 text-xs"></i> via dei Livelli di Sopra, 3A<br>24060 Villa Landri (BG)</li>
+            <li class="pt-2 text-xs text-white/50"><i class="fa-solid fa-clock text-brand mr-1"></i> Lun - Ven 08:00 - 12:30 / 14:00 - 19:00<br>Sab 08:00 - 12:00 (oppure su appuntamento)</li>
           </ul>
         </div>
 
@@ -60,7 +60,7 @@
       <!-- Bottom Credits -->
       <div class="pt-8 border-t border-white/10 flex flex-col md:flex-row items-center justify-between gap-4">
         <div class="text-xs text-white/40">
-          © <?php echo date('Y'); ?> HK Garage SNC di Harshit & Karan · P.IVA IT01234567890 · Tutti i diritti riservati
+          © <?php echo date('Y'); ?> HK Garage di Harshit & Karan · P.IVA IT01234567890 · Tutti i diritti riservati
         </div>
         <div class="flex items-center gap-6 text-xs text-white/40">
           <a href="admin/login.php" class="hover:text-brand transition-colors font-bold"><i class="fa-solid fa-user-lock mr-1"></i> Area Admin</a>

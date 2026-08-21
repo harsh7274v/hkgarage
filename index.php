@@ -2,7 +2,7 @@
 require_once __DIR__ . '/includes/config.php';
 require_once __DIR__ . '/includes/database.php';
 
-$pageTitle = "Officina Meccanica & Diagnosi Elettronica Costa di Mezzate";
+$pageTitle = "Officina Meccanica & Diagnosi Elettronica Villa Landri";
 
 // Fetch 3 latest news from Database
 $latestNews = [];
@@ -120,7 +120,7 @@ require_once __DIR__ . '/includes/header.php';
         <div class="lg:col-span-7">
           <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white border border-ink/10 shadow-sm mb-6">
             <i class="fa-solid fa-wand-magic-sparkles text-brand text-xs"></i>
-            <span class="text-xs font-extrabold text-ink tracking-wide uppercase">Officina Multimarca a Costa di Mezzate</span>
+            <span class="text-xs font-extrabold text-ink tracking-wide uppercase">Officina Multimarca a Villa Landri</span>
           </div>
 
           <h1 class="font-display font-black text-ink text-[44px] sm:text-6xl lg:text-[76px] leading-[0.95] tracking-tight">
@@ -219,7 +219,7 @@ require_once __DIR__ . '/includes/header.php';
           <span class="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
         </span>
         <span class="font-display font-black tracking-wider text-white">OFFICINA ATTIVA:</span>
-        <span class="text-white/70 font-medium">Costa di Mezzate · 4 Postazioni Operative</span>
+        <span class="text-white/70 font-medium">Villa Landri · 4 Postazioni Operative</span>
       </div>
 
       <div class="hidden md:flex items-center gap-8 text-white/75">
@@ -924,7 +924,7 @@ require_once __DIR__ . '/includes/header.php';
               <i class="fa-solid fa-calendar-check text-sm text-ink"></i>
               Prenota adesso
             </button>
-            <a href="tel:+390351234567" class="h-14 px-8 rounded-full bg-white/10 hover:bg-white/20 border border-white/15 text-white font-bold text-base inline-flex items-center justify-center gap-2 transition-all hover:scale-105">
+            <a href="tel:+393202819584" class="h-14 px-8 rounded-full bg-white/10 hover:bg-white/20 border border-white/15 text-white font-bold text-base inline-flex items-center justify-center gap-2 transition-all hover:scale-105">
               <i class="fa-solid fa-phone text-sm"></i>
               Chiamaci
             </a>
@@ -940,7 +940,7 @@ require_once __DIR__ . '/includes/header.php';
           </div>
           <div class="text-xs font-black text-ink/40 tracking-wider uppercase mb-1 font-display">INDIRIZZO</div>
           <div class="text-ink font-bold text-sm leading-relaxed">
-            Via Consortile della Conta, 3<br>24060 Costa di Mezzate (BG)
+            via dei Livelli di Sopra, 3A<br>24060 Villa Landri (BG)
           </div>
         </div>
 
@@ -948,8 +948,13 @@ require_once __DIR__ . '/includes/header.php';
           <div class="text-brand text-xl font-bold mb-2">
             <i class="fa-solid fa-phone"></i>
           </div>
-          <div class="text-xs font-black text-ink/40 tracking-wider uppercase mb-1 font-display">TELEFONO</div>
-          <a href="tel:+390351234567" class="text-ink font-bold text-sm hover:text-brand transition-colors">+39 035 123 4567</a>
+          <div class="text-xs font-black text-ink/40 tracking-wider uppercase mb-1 font-display">TELEFONO & WHATSAPP</div>
+          <div class="flex flex-col gap-1">
+            <a href="tel:+393202819584" class="text-ink font-bold text-sm hover:text-brand transition-colors">320 281 9584</a>
+            <a href="https://wa.me/393202819584" target="_blank" rel="noopener" class="inline-flex items-center gap-1.5 text-xs font-bold text-emerald-600 hover:text-emerald-700 transition-colors">
+              <i class="fa-brands fa-whatsapp text-sm"></i> Chat su WhatsApp
+            </a>
+          </div>
         </div>
 
         <div class="pt-4 md:pt-0 md:px-4 reveal delay-300">
@@ -957,7 +962,7 @@ require_once __DIR__ . '/includes/header.php';
             <i class="fa-solid fa-envelope"></i>
           </div>
           <div class="text-xs font-black text-ink/40 tracking-wider uppercase mb-1 font-display">EMAIL</div>
-          <a href="mailto:appointments@hkgarage.it" class="text-ink font-bold text-sm hover:text-brand transition-colors">appointments@hkgarage.it</a>
+          <a href="mailto:hkgarage24@gmail.com" class="text-ink font-bold text-sm hover:text-brand transition-colors">hkgarage24@gmail.com</a>
         </div>
 
         <div class="pt-4 md:pt-0 md:px-4 reveal delay-400">
@@ -966,8 +971,8 @@ require_once __DIR__ . '/includes/header.php';
           </div>
           <div class="text-xs font-black text-ink/40 tracking-wider uppercase mb-2 font-display">ORARI APERTURA</div>
           <div class="text-xs text-ink/80 leading-relaxed space-y-0.5 font-medium">
-            <div><strong class="text-ink">Lun - Ven:</strong> 08:00 - 12:30 / 14:00 - 18:30</div>
-            <div><strong class="text-ink">Sabato:</strong> 08:00 - 12:00</div>
+            <div><strong class="text-ink">Lun - Ven:</strong> 08:00 - 12:30 / 14:00 - 19:00</div>
+            <div><strong class="text-ink">Sabato:</strong> 08:00 - 12:00 <span class="text-ink/60 text-[10px]">(oppure su appuntamento)</span></div>
             <div><strong class="text-brand font-bold">Domenica:</strong> Chiuso</div>
           </div>
         </div>

@@ -32,7 +32,7 @@ function createPHPMailerInstance(): ?PHPMailer {
         $mail->isSMTP();
         $mail->Host       = MAIL_HOST; // Default: smtps.aruba.it
         $mail->SMTPAuth   = (!empty(MAIL_USER) && !empty(MAIL_PASS));
-        $mail->Username   = MAIL_USER; // Aruba email: appointments@hkgarage.it
+        $mail->Username   = MAIL_USER; // Aruba email: hkgarage24@gmail.com
         $mail->Password   = MAIL_PASS;
         
         $port = intval(MAIL_PORT);
@@ -45,7 +45,7 @@ function createPHPMailerInstance(): ?PHPMailer {
         }
 
         $mail->CharSet = 'UTF-8';
-        $mail->setFrom(MAIL_FROM, MAIL_FROM_NAME); // HK Garage <appointments@hkgarage.it>
+        $mail->setFrom(MAIL_FROM, MAIL_FROM_NAME); // HK Garage <hkgarage24@gmail.com>
         $mail->addReplyTo(GARAGE_NOTIFICATION_EMAIL, MAIL_FROM_NAME);
 
         return $mail;
@@ -85,7 +85,7 @@ function sendEmail(string $toEmail, string $toName, string $subject, string $htm
 /**
  * Send dual notifications after a successful booking:
  * 1. Booking Confirmation to Customer
- * 2. New Booking Notification to Garage (appointments@hkgarage.it)
+ * 2. New Booking Notification to Garage (hkgarage24@gmail.com)
  * 
  * Never throws exceptions - error is logged silently if sending fails.
  */
@@ -139,7 +139,7 @@ function sendBookingNotificationEmails(array $details): array {
         error_log("Failed sending booking email to customer ($customerEmail): " . $e->getMessage());
     }
 
-    // Send Garage Notification Email (appointments@hkgarage.it)
+    // Send Garage Notification Email (hkgarage24@gmail.com)
     try {
         $results['garage_email_sent'] = sendEmail($garageEmail, "HK Garage Management", $garageSubject, $garageBody);
     } catch (Throwable $e) {
@@ -261,13 +261,13 @@ function generateCustomerEmailHTML(array $data): string {
                           Dove Trovarci &amp; Contatti
                         </h4>
                         <p style='margin:0 0 5px 0; font-size:13px; color:#e2e8f0;'>
-                          📍 <strong>HK Garage SNC</strong> – Via Consortile della Conta, 3 - 24060 Costa di Mezzate (BG)
+                          📍 <strong>HK Garage</strong> – via dei Livelli di Sopra, 3A - 24060 Villa Landri (BG)
                         </p>
                         <p style='margin:0 0 5px 0; font-size:13px; color:#e2e8f0;'>
-                          📞 <strong>Telefono / WhatsApp:</strong> +39 035 123 4567
+                          📞 <strong>Telefono / WhatsApp:</strong> 320 281 9584
                         </p>
                         <p style='margin:0; font-size:13px; color:#e2e8f0;'>
-                          ✉️ <strong>Email:</strong> appointments@hkgarage.it
+                          ✉️ <strong>Email:</strong> hkgarage24@gmail.com
                         </p>
                       </td>
                     </tr>
@@ -278,7 +278,7 @@ function generateCustomerEmailHTML(array $data): string {
               <!-- Footer -->
               <tr>
                 <td style='background-color:#f0f2f5; padding:20px; text-align:center; font-size:12px; color:#718096; border-top:1px solid #e2e8f0;'>
-                  <p style='margin:0 0 5px 0;'>&copy; " . date('Y') . " HK Garage SNC di Harshit &amp; Karan. Tutti i diritti riservati.</p>
+                  <p style='margin:0 0 5px 0;'>&copy; " . date('Y') . " HK Garage di Harshit &amp; Karan. Tutti i diritti riservati.</p>
                   <p style='margin:0;'>Ricevi questa email in seguito a una richiesta di prenotazione su hkgarage.it</p>
                 </td>
               </tr>
@@ -369,7 +369,7 @@ function generateGarageEmailHTML(array $data): string {
 
               <tr style='background-color:#f0f2f5;'>
                 <td style='padding:15px; text-align:center; font-size:12px; color:#718096;'>
-                  HK Garage Admin Notification System &bull; appointments@hkgarage.it
+                  HK Garage Admin Notification System &bull; hkgarage24@gmail.com
                 </td>
               </tr>
 
@@ -595,10 +595,10 @@ function sendBookingStatusUpdateEmail(int $appointmentId, string $status, ?strin
                               📍 Officina HK Garage
                             </h4>
                             <p style='margin:0 0 5px 0; font-size:13px; color:#cbd5e1;'>
-                              Via Consortile della Conta, 3 - 24060 Costa di Mezzate (BG)
+                              via dei Livelli di Sopra, 3A - 24060 Villa Landri (BG)
                             </p>
                             <p style='margin:0 0 5px 0; font-size:13px; color:#cbd5e1;'>
-                              📞 <strong>Tel:</strong> +39 035 123 4567 | ✉️ appointments@hkgarage.it
+                              📞 <strong>Tel:</strong> 320 281 9584 | ✉️ hkgarage24@gmail.com
                             </p>
                           </td>
                         </tr>
@@ -608,7 +608,7 @@ function sendBookingStatusUpdateEmail(int $appointmentId, string $status, ?strin
 
                   <tr>
                     <td style='background-color:#f1f5f9; padding:20px; text-align:center; font-size:12px; color:#64748b;'>
-                      &copy; " . date('Y') . " HK Garage SNC. Notifica automatica del sistema di gestione appuntamenti.
+                      &copy; " . date('Y') . " HK Garage. Notifica automatica del sistema di gestione appuntamenti.
                     </td>
                   </tr>
 

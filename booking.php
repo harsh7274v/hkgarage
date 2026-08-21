@@ -29,7 +29,7 @@ require_once __DIR__ . '/includes/header.php';
       Fissa il tuo appuntamento in officina
     </h1>
     <p class="text-ink/60 font-medium max-w-xl mx-auto text-base">
-      Seleziona il servizio desiderato, la data e l'orario disponibile per il tuo intervento a Costa di Mezzate.
+      Seleziona il servizio desiderato, la data e l'orario disponibile per il tuo intervento a Villa Landri.
     </p>
   </div>
 </div>
@@ -135,7 +135,7 @@ require_once __DIR__ . '/includes/header.php';
                   <input type="text" id="booking_date" name="booking_date" required placeholder="Clicca per scegliere la data" readonly class="w-full h-12 px-4 bg-cream/50 border border-ink/15 rounded-xl focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand text-sm font-semibold cursor-pointer">
                   <i class="fa-regular fa-calendar-days absolute right-4 top-3.5 text-ink/40 pointer-events-none"></i>
                 </div>
-                <p class="text-xs text-ink/60 mt-1.5 font-medium"><i class="fa-solid fa-circle-info text-brand mr-1"></i>Orari: Lun-Ven 08:00-18:30 | Sab 08:00-12:00</p>
+                <p class="text-xs text-ink/60 mt-1.5 font-medium"><i class="fa-solid fa-circle-info text-brand mr-1"></i>Orari: Lun-Ven 08:00-12:30 / 14:00-19:00 | Sab 08:00-12:00 (oppure su appuntamento)</p>
               </div>
 
               <div>
